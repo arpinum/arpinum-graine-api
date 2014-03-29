@@ -3,7 +3,7 @@ package fr.arpinum.ddd.commande;
 
 public interface SynchronisationBus {
 
-    void avantExecution();
+    void avantExecution(Commande<?> commande);
 
     void apresExecution();
 
