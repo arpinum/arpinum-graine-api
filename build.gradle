@@ -11,8 +11,13 @@ project.ext.with {
     set "restletVersion", "2.1.7"
     set "mongoLinkVersion", "1.0.1"
 }
-dependencies {
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
 
+dependencies {
     compile 'com.google.inject:guice:3.0'
     compile 'com.google.guava:guava:16.0.1'
     compile 'ch.qos.logback:logback-classic:1.0.13'
@@ -35,6 +40,7 @@ dependencies {
     testCompile 'com.googlecode.catch-exception:catch-exception:1.2.0'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }
+
 
 task deps(type: Sync) {
     from configurations.compile
