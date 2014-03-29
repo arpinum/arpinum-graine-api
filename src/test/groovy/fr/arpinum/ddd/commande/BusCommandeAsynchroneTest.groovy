@@ -5,10 +5,10 @@ import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ListeningExecutorService
 import com.google.common.util.concurrent.MoreExecutors
-import fr.arpinum.bus.Commande
-import fr.arpinum.bus.HandlerCommande
-import fr.arpinum.bus.ResultatCommande
-import fr.arpinum.bus.SynchronisationBus
+import fr.arpinum.ddd.bus.Commande
+import fr.arpinum.ddd.bus.HandlerCommande
+import fr.arpinum.ddd.bus.ResultatCommande
+import fr.arpinum.ddd.bus.SynchronisationBus
 import spock.lang.Specification
 
 import java.util.concurrent.ExecutorService

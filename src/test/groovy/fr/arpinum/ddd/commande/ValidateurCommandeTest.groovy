@@ -1,6 +1,6 @@
 package fr.arpinum.ddd.commande
 
-import fr.arpinum.bus.Commande
+import fr.arpinum.ddd.bus.Commande
 import org.hibernate.validator.constraints.NotEmpty
 import spock.lang.Specification
 
@@ -26,7 +26,7 @@ class ValidateurCommandeTest extends Specification {
         then:
         ValidationException exception = thrown()
         !exception.messages().empty
-        exception.messages()[0] == "nom ne peut pas être vide"
+        exception.messages()[0] != null
     }
 
     def "appelle la validation en début de synchronisation avec le bus"() {

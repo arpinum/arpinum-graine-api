@@ -6,7 +6,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
-import fr.arpinum.bus.*;
+import fr.arpinum.ddd.bus.*;
 
 import java.util.Map;
 import java.util.Set;

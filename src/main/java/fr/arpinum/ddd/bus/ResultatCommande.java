@@ -1,4 +1,4 @@
-package fr.arpinum.bus;
+package fr.arpinum.ddd.bus;
 
 public class ResultatCommande<TReponse> {
 

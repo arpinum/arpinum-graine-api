@@ -1,4 +1,4 @@
-package fr.arpinum.bus;
+package fr.arpinum.ddd.bus;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

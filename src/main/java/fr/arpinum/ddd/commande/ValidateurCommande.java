@@ -1,7 +1,7 @@
 package fr.arpinum.ddd.commande;
 
-import fr.arpinum.bus.Commande;
-import fr.arpinum.bus.SynchronisationBus;
+import fr.arpinum.ddd.bus.Commande;
+import fr.arpinum.ddd.bus.SynchronisationBus;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
