@@ -1,4 +1,4 @@
-package fr.arpinum.ddd.commande;
+package fr.arpinum.bus;
 
 
 public interface SynchronisationBus {

@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
+import fr.arpinum.bus.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -13,11 +14,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class BusCommandeLocal implements BusCommande {
+public class BusCommandeAsynchrone implements BusCommande {
 
 
     @Inject
-    public BusCommandeLocal(Set<SynchronisationBus> synchronisations, Set<HandlerCommande> handlers) {
+    public BusCommandeAsynchrone(Set<SynchronisationBus> synchronisations, Set<HandlerCommande> handlers) {
         for (HandlerCommande handler : handlers) {
             this.handlers.put(handler.typeCommande(), handler);
         }
