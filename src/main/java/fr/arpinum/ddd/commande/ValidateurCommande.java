@@ -5,7 +5,9 @@ import fr.arpinum.bus.SynchronisationBus;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ValidateurCommande implements SynchronisationBus {
 
@@ -13,16 +15,20 @@ public class ValidateurCommande implements SynchronisationBus {
         this.validator = validator;
     }
 
+    @Override
+    public void avantExecution(Commande<?> commande) {
+        valide(commande);
+    }
+
     public void valide(Commande<?> commande) {
         Set<ConstraintViolation<Commande<?>>> violations = validator.validate(commande);
         if (!violations.isEmpty()) {
-            throw new ValidationException();
+            throw new ValidationException(enMessages(violations));
         }
     }
 
-    @Override
-    public void avantExecution(Commande<?> commande) {
-
+    private List<String> enMessages(Set<ConstraintViolation<Commande<?>>> violations) {
+        return violations.stream().map((violation) -> violation.getPropertyPath() + " " + violation.getMessage()).collect(Collectors.toList());
     }
 
     @Override

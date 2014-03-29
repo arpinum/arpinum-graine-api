@@ -19,6 +19,24 @@ class ValidateurCommandeTest extends Specification {
         thrown(ValidationException)
     }
 
+    def "peut donner la cause de l'erreur"() {
+        when:
+        validateur.valide new FauseCommande("")
+
+        then:
+        ValidationException exception = thrown()
+        !exception.messages().empty
+        exception.messages()[0] == "nom ne peut pas être vide"
+    }
+
+    def "appelle la validation en début de synchronisation avec le bus"() {
+        when:
+        validateur.avantExecution new FauseCommande("")
+
+        then:
+        thrown(ValidationException)
+    }
+
     private static class FauseCommande implements Commande<String> {
         @NotEmpty
         String nom
