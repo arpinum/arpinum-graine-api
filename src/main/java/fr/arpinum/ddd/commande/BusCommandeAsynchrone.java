@@ -5,9 +5,9 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.google.inject.Inject;
 import fr.arpinum.ddd.bus.*;
 
+import javax.inject.Inject;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;

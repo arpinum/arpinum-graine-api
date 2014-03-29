@@ -3,6 +3,7 @@ package fr.arpinum.ddd.commande;
 import fr.arpinum.ddd.bus.Commande;
 import fr.arpinum.ddd.bus.SynchronisationBus;
 
+import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 public class ValidateurCommande implements SynchronisationBus {
 
+    @Inject
     public ValidateurCommande(Validator validator) {
         this.validator = validator;
     }
