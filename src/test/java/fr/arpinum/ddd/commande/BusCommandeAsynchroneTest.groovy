@@ -28,7 +28,7 @@ public class BusCommandeAsynchroneTest extends Specification {
         bus.poste(commande)
 
         then:
-        handler.commandeReçue == commande
+        handler.commandeReçue != commande
     }
 
     def "est asynchrone"() {
