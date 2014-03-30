@@ -40,6 +40,7 @@ public class BusCommandeAsynchrone implements BusCommande {
                 synchronisations.forEach(SynchronisationBus::apresExecution);
                 return ResultatCommande.succes(reponse);
             } catch (Throwable e) {
+                synchronisations.forEach(SynchronisationBus::surErreur);
                 return ResultatCommande.erreur(e);
             } finally {
                 synchronisations.forEach(SynchronisationBus::finalement);

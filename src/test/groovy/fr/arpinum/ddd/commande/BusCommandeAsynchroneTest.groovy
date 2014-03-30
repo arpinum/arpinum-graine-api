@@ -72,6 +72,7 @@ public class BusCommandeAsynchroneTest extends Specification {
         bus.poste new FausseCommande()
 
         then:
+        1 * synchronisationBus.surErreur()
         1 * synchronisationBus.finalement()
     }
 

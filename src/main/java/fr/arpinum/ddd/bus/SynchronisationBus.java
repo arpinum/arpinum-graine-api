@@ -3,9 +3,25 @@ package fr.arpinum.ddd.bus;
 
 public interface SynchronisationBus {
 
-    void avantExecution(Commande<?> commande);
+    default void avantExecution(Commande<?> commande) {
 
-    void apresExecution();
+    }
 
-    void finalement();
+    ;
+
+    default void surErreur() {
+
+    }
+
+    default void apresExecution() {
+
+    }
+
+    ;
+
+    default void finalement() {
+
+    }
+
+    ;
 }

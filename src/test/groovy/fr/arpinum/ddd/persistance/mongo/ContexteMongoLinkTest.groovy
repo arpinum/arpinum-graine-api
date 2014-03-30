@@ -34,5 +34,17 @@ class ContexteMongoLinkTest extends Specification {
         1 * session.stop()
     }
 
+    def "clear la session si erreur"() {
+        given:
+        def contexte = new ContexteMongoLink(sessionManager)
+        sessionManager.createSession() >> session
+
+        when:
+        contexte.surErreur()
+
+        then:
+        1 * session.clear()
+    }
+
 
 }

@@ -21,13 +21,14 @@ public class ContexteMongoLink implements SynchronisationBus {
     }
 
     @Override
-    public void apresExecution() {
-
+    public void finalement() {
+        sessions.get().stop();
+        sessions.remove();
     }
 
     @Override
-    public void finalement() {
-        sessions.get().stop();
+    public void surErreur() {
+        sessions.get().clear();
     }
 
     public MongoSession sessionCourante() {
