@@ -1,32 +1,24 @@
 package fr.arpinum.ddd.persistance.mongo
 
-import fr.arpinum.ddd.modele.Entrepot
-import fr.arpinum.ddd.modele.Racine
-import org.mongolink.MongoSession
 import org.mongolink.test.MongolinkRule
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class EntrepotMongoTest extends Specification {
 
     def setup() {
-        mongolink = MongolinkRule.withPackage("fr.arpinum.ddd.persistance.mongo")
+        mongolink = MongolinkRule.withPackage("fr.arpinum.ddd.persistance.mongo.mapping")
         mongolink.before()
+        entrepot = new EntrepotFausseRacine(mongolink.currentSession)
     }
 
     def cleanup() {
         mongolink.after()
     }
 
-    @Ignore
     def "peut ajouter"() {
-        given:
-        def entrepot = new EntrepoFausseRacine(mongolink.currentSession)
-
         when:
         entrepot.ajoute(new FausseRacine("1"))
         mongolink.cleanSession();
-
 
         then:
         def racineTrouvé = entrepot.get("1")
@@ -34,28 +26,20 @@ class EntrepotMongoTest extends Specification {
         racineTrouvé.id == "1"
     }
 
-    def mongolink
+    def "peut supprimer"() {
+        given:
+        def racine = new FausseRacine("1")
+        entrepot.ajoute(racine)
 
-    public class FausseRacine implements Racine<String> {
+        when:
+        entrepot.supprime(racine)
+        mongolink.cleanSession()
 
-        FausseRacine(String id) {
-            this.id = id
-        }
-
-        @Override
-        String getId() {
-            return this.id;
-        }
-
-        public String id;
+        then:
+        entrepot.get("1") == null
     }
 
-    public class EntrepoFausseRacine extends EntrepotMongo<String, FausseRacine> implements Entrepot<String, FausseRacine> {
+    MongolinkRule mongolink
+    EntrepotFausseRacine entrepot
 
-        protected EntrepoFausseRacine(MongoSession session) {
-            super(session)
-        }
-
-
-    }
 }
