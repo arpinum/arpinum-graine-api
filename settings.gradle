@@ -2,4 +2,4 @@ sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
 
-rootProject.name = 'arpinum-seed-java'
+rootProject.name = 'arpinum-graine-java'
