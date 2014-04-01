@@ -10,6 +10,7 @@ repositories {
 project.ext.with {
     set "restletVersion", "2.1.7"
     set "mongoLinkVersion", "1.0.1"
+    set "guiceVersion", "4.0-beta4"
 }
 test {
     testLogging {
@@ -18,19 +19,25 @@ test {
 }
 
 dependencies {
-    compile 'com.google.inject:guice:3.0'
     compile 'com.google.guava:guava:16.0.1'
-    compile 'ch.qos.logback:logback-classic:1.0.13'
+    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    compile "com.google.inject:guice:$guiceVersion"
+    compile 'org.reflections:reflections:0.9.9-RC1'
+
     compile "org.restlet.jse:org.restlet:$restletVersion"
     compile "org.restlet.jse:org.restlet.ext.json:$restletVersion"
     compile "org.restlet.jse:org.restlet.ext.jackson:${restletVersion}"
     compile "org.restlet.jse:org.restlet.ext.jetty:$restletVersion"
-    compile 'org.reflections:reflections:0.9.9-RC1'
+
     compile 'org.hibernate:hibernate-validator:5.0.3.Final'
     compile 'javax.el:javax.el-api:2.2.4'
     compile 'org.glassfish.web:javax.el:2.2.4'
+
     compile "org.mongolink:mongolink:$mongoLinkVersion"
+    compile 'org.jongo:jongo:0.4'
+
     compile 'org.slf4j:jul-to-slf4j:1.7.2'
+    compile 'ch.qos.logback:logback-classic:1.0.13'
 
 
     testCompile('junit:junit:4.11') {
