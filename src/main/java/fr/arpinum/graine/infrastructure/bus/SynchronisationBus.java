@@ -1,9 +1,9 @@
-package fr.arpinum.graine.bus;
+package fr.arpinum.graine.infrastructure.bus;
 
 
 public interface SynchronisationBus {
 
-    default void avantExecution(Commande<?> commande) {
+    default void avantExecution(Message<?> message) {
 
     }
 

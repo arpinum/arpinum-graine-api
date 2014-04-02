@@ -1,6 +1,6 @@
-package fr.arpinum.graine.persistance.mongo.mapping;
+package fr.arpinum.graine.infrastructure.persistance.mongo.mapping;
 
-import fr.arpinum.graine.persistance.mongo.FausseRacine;
+import fr.arpinum.graine.infrastructure.persistance.mongo.FausseRacine;
 import org.mongolink.domain.mapper.AggregateMap;
 
 @SuppressWarnings("UnusedDeclaration")

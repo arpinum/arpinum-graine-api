@@ -1,28 +1,24 @@
-package fr.arpinum.graine.commande
+package fr.arpinum.graine.infrastructure.bus
 
 import com.google.common.collect.Sets
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ListeningExecutorService
 import com.google.common.util.concurrent.MoreExecutors
-import fr.arpinum.graine.bus.Commande
-import fr.arpinum.graine.bus.HandlerCommande
-import fr.arpinum.graine.bus.ResultatCommande
-import fr.arpinum.graine.bus.SynchronisationBus
 import spock.lang.Specification
 
 import java.util.concurrent.ExecutorService
 
 import static org.mockito.Mockito.*
 
-public class BusCommandeAsynchroneTest extends Specification {
+public class BusAsynchroneTest extends Specification {
 
 
     def "peut exécuter une commande"() {
         given:
         def handler = unHandler()
         def bus = busAvec(handler)
-        def commande = new FausseCommande()
+        def commande = new FauxMessage()
 
         when:
         bus.poste(commande)
@@ -38,7 +34,7 @@ public class BusCommandeAsynchroneTest extends Specification {
         bus.setExecutor(executor)
 
         when:
-        bus.poste(new FausseCommande())
+        bus.poste(new FauxMessage())
 
         then:
         1 * executor.execute(!null)
@@ -49,7 +45,7 @@ public class BusCommandeAsynchroneTest extends Specification {
         given:
         def synchro = Mock(SynchronisationBus)
         def bus = busAvec(synchro)
-        def commande = new FausseCommande()
+        def commande = new FauxMessage()
 
         when:
         bus.poste(commande)
@@ -69,7 +65,7 @@ public class BusCommandeAsynchroneTest extends Specification {
         def bus = busAvec(handler, synchronisationBus)
 
         when:
-        bus.poste new FausseCommande()
+        bus.poste new FauxMessage()
 
         then:
         1 * synchronisationBus.surErreur()
@@ -84,13 +80,25 @@ public class BusCommandeAsynchroneTest extends Specification {
         def bus = busAvec(handler)
 
         when:
-        final ListenableFuture<ResultatCommande<String>> promesse = bus.poste(new FausseCommande())
+        final ListenableFuture<ResultatExecution<String>> promesse = bus.poste(new FauxMessage())
 
         then:
         promesse != null
-        final ResultatCommande<String> réponse = Futures.getUnchecked(promesse)
+        final ResultatExecution<String> réponse = Futures.getUnchecked(promesse)
         réponse.isSucces()
         réponse.donnees() == "42"
+    }
+
+    def "peut retourner directement le résultat"() {
+        given:
+        def handler = new FausseCommandeHandler()
+        def bus = busAvec(handler)
+
+        when:
+        def résultat = bus.posteToutDeSuite(new FauxMessage())
+
+        then:
+        résultat != null
     }
 
     def "retourne un résultat sur erreur"() {
@@ -100,24 +108,27 @@ public class BusCommandeAsynchroneTest extends Specification {
         def bus = busAvec(handler);
 
         when:
-        final ListenableFuture<ResultatCommande<String>> promesse = bus.poste(new FausseCommande())
+        final ListenableFuture<ResultatExecution<String>> promesse = bus.poste(new FauxMessage())
 
         then:
         promesse != null
-        final ResultatCommande<String> réponse = Futures.getUnchecked(promesse)
+        final ResultatExecution<String> réponse = Futures.getUnchecked(promesse)
         réponse != null
         réponse.isErreur()
         réponse.erreur() instanceof RuntimeException
         réponse.erreur().message == "Ceci est une erreur"
     }
 
-    private BusCommandeAsynchrone bus() {
-        return new BusCommandeAsynchrone(Sets.newHashSet(mock(SynchronisationBus.class)), Sets.newHashSet(new FausseCommandeHandler()));
+    private BusAsynchrone bus() {
+        return new BusAsynchrone(Sets.newHashSet(mock(SynchronisationBus.class)), Sets.newHashSet(new FausseCommandeHandler())) {
+        };
     }
 
-    private BusCommandeAsynchrone busAvec(FausseCommandeHandler handler, SynchronisationBus synchronisationBus) {
-        final BusCommandeAsynchrone bus = new BusCommandeAsynchrone(Sets.newHashSet(synchronisationBus), Sets.newHashSet(handler));
-        bus.setExecutor(executeur());
+    private BusAsynchrone busAvec(FausseCommandeHandler handler, SynchronisationBus synchronisationBus) {
+        final BusAsynchrone bus = new BusAsynchrone(Sets.newHashSet(synchronisationBus), Sets.newHashSet(handler)) {
+
+        }
+        bus.setExecutor(executeur())
         return bus;
     }
 
@@ -125,11 +136,11 @@ public class BusCommandeAsynchroneTest extends Specification {
         return MoreExecutors.sameThreadExecutor()
     }
 
-    private BusCommandeAsynchrone busAvec(SynchronisationBus synchro) {
+    private BusAsynchrone busAvec(SynchronisationBus synchro) {
         return busAvec(unHandler(), synchro)
     }
 
-    private BusCommandeAsynchrone busAvec(FausseCommandeHandler handler) {
+    private BusAsynchrone busAvec(FausseCommandeHandler handler) {
         return busAvec(handler, mock(SynchronisationBus.class))
     }
 
@@ -137,18 +148,18 @@ public class BusCommandeAsynchroneTest extends Specification {
         return new FausseCommandeHandler()
     }
 
-    private class FausseCommande implements Commande<String> {
+    private class FauxMessage implements Message<String> {
 
-        private FausseCommande() {
+        private FauxMessage() {
         }
 
 
     }
 
-    private class FausseCommandeHandler implements HandlerCommande<FausseCommande, String> {
+    private class FausseCommandeHandler implements HandlerMessage<FauxMessage, String> {
 
         @Override
-        public String execute(FausseCommande commande) {
+        public String execute(FauxMessage commande) {
             commandeReçue = commande;
             if (exception) {
                 throw new RuntimeException("Ceci est une erreur");
@@ -157,15 +168,15 @@ public class BusCommandeAsynchroneTest extends Specification {
         }
 
         @Override
-        public Class<FausseCommande> typeCommande() {
-            return FausseCommande.class;
+        public Class<FauxMessage> typeCommande() {
+            return FauxMessage.class;
         }
 
         public void renvoieException() {
             this.exception = true;
         }
 
-        private FausseCommande commandeReçue;
+        private FauxMessage commandeReçue;
         private boolean exception;
     }
 }

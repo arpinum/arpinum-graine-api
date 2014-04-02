@@ -1,14 +1,17 @@
 package fr.arpinum.graine.recherche;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import fr.arpinum.graine.bus.Bus;
-import fr.arpinum.graine.bus.Commande;
-import fr.arpinum.graine.bus.ResultatCommande;
+import com.google.common.collect.Sets;
+import fr.arpinum.graine.infrastructure.bus.BusAsynchrone;
 
-public class BusRecherche implements Bus {
+import javax.inject.Inject;
+import java.util.Set;
 
-    @Override
-    public <TReponse> ListenableFuture<ResultatCommande<TReponse>> poste(Commande<TReponse> commande) {
-        return null;
+@SuppressWarnings("UnusedDeclaration")
+public class BusRecherche extends BusAsynchrone {
+
+    @Inject
+    public BusRecherche(Set<HandlerRecherche> handlers) {
+        super(Sets.newHashSet(), handlers);
     }
+
 }

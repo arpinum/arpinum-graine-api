@@ -1,4 +1,4 @@
-package fr.arpinum.graine.bus.guice;
+package fr.arpinum.graine.infrastructure.bus.guice;
 
 import com.google.inject.Binder;
 import com.google.inject.multibindings.Multibinder;

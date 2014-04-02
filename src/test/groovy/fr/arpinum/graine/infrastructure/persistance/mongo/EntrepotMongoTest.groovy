@@ -1,4 +1,4 @@
-package fr.arpinum.graine.persistance.mongo
+package fr.arpinum.graine.infrastructure.persistance.mongo
 
 import org.mongolink.test.MongolinkRule
 import spock.lang.Specification
@@ -6,7 +6,7 @@ import spock.lang.Specification
 class EntrepotMongoTest extends Specification {
 
     def setup() {
-        mongolink = MongolinkRule.withPackage("fr.arpinum.graine.persistance.mongo.mapping")
+        mongolink = MongolinkRule.withPackage("fr.arpinum.graine.infrastructure.persistance.mongo.mapping")
         mongolink.before()
         entrepot = new EntrepotFausseRacine(mongolink.currentSession)
     }

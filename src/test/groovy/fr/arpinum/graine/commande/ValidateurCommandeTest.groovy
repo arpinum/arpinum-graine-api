@@ -1,6 +1,6 @@
 package fr.arpinum.graine.commande
 
-import fr.arpinum.graine.bus.Commande
+import fr.arpinum.graine.infrastructure.bus.Message
 import org.hibernate.validator.constraints.NotEmpty
 import spock.lang.Specification
 
@@ -13,7 +13,7 @@ class ValidateurCommandeTest extends Specification {
 
     def "peut valider une commande"() {
         when:
-        validateur.valide new FauseCommande("")
+        validateur.valide new FauxMessage("")
 
         then:
         thrown(ValidationException)
@@ -21,7 +21,7 @@ class ValidateurCommandeTest extends Specification {
 
     def "peut donner la cause de l'erreur"() {
         when:
-        validateur.valide new FauseCommande("")
+        validateur.valide new FauxMessage("")
 
         then:
         ValidationException exception = thrown()
@@ -31,17 +31,17 @@ class ValidateurCommandeTest extends Specification {
 
     def "appelle la validation en début de synchronisation avec le bus"() {
         when:
-        validateur.avantExecution new FauseCommande("")
+        validateur.avantExecution new FauxMessage("")
 
         then:
         thrown(ValidationException)
     }
 
-    private static class FauseCommande implements Commande<String> {
+    private static class FauxMessage implements Message<String> {
         @NotEmpty
         String nom
 
-        FauseCommande(String nom) {
+        FauxMessage(String nom) {
             this.nom = nom
         }
     }

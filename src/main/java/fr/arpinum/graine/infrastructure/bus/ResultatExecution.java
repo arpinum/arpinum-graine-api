@@ -1,23 +1,23 @@
-package fr.arpinum.graine.bus;
+package fr.arpinum.graine.infrastructure.bus;
 
-public class ResultatCommande<TReponse> {
+public class ResultatExecution<TReponse> {
 
-    public static <TReponse> ResultatCommande<TReponse> succes(TReponse reponse) {
-        return new ResultatCommande<>(reponse, true);
+    public static <TReponse> ResultatExecution<TReponse> succes(TReponse reponse) {
+        return new ResultatExecution<>(reponse, true);
     }
 
-    public static <TReponse> ResultatCommande<TReponse> erreur(Throwable erreur) {
-        return new ResultatCommande<>(erreur);
+    public static <TReponse> ResultatExecution<TReponse> erreur(Throwable erreur) {
+        return new ResultatExecution<>(erreur);
     }
 
 
-    private ResultatCommande(TReponse reponse, boolean succes) {
+    private ResultatExecution(TReponse reponse, boolean succes) {
         this.reponse = reponse;
         this.succes = succes;
         erreur = null;
     }
 
-    public ResultatCommande(Throwable erreur) {
+    public ResultatExecution(Throwable erreur) {
         this.erreur = erreur;
         succes = false;
         reponse = null;

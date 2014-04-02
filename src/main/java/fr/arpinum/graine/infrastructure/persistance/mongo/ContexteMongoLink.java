@@ -1,13 +1,13 @@
-package fr.arpinum.graine.persistance.mongo;
+package fr.arpinum.graine.infrastructure.persistance.mongo;
 
-import fr.arpinum.graine.bus.Commande;
-import fr.arpinum.graine.bus.SynchronisationBus;
+import fr.arpinum.graine.commande.SynchronisationCommande;
+import fr.arpinum.graine.infrastructure.bus.Message;
 import org.mongolink.MongoSession;
 import org.mongolink.MongoSessionManager;
 
 import javax.inject.Inject;
 
-public class ContexteMongoLink implements SynchronisationBus {
+public class ContexteMongoLink implements SynchronisationCommande {
 
 
     @Inject
@@ -16,7 +16,7 @@ public class ContexteMongoLink implements SynchronisationBus {
     }
 
     @Override
-    public void avantExecution(Commande<?> commande) {
+    public void avantExecution(Message<?> message) {
         sessions.get().start();
     }
 

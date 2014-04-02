@@ -1,4 +1,4 @@
-package fr.arpinum.graine.persistance.mongo;
+package fr.arpinum.graine.infrastructure.persistance.mongo;
 
 import com.google.common.reflect.TypeToken;
 import fr.arpinum.graine.modele.Entrepot;
