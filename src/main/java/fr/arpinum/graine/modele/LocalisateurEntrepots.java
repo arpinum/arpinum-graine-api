@@ -1,5 +1,5 @@
 package fr.arpinum.graine.modele;
 
-public abstract interface LocalisateurEntrepots {
+public interface LocalisateurEntrepots {
 
 }
