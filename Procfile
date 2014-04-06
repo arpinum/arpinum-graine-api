@@ -1,0 +1,1 @@
+web:    java -cp ./build/deps/*:./build/libs/* votreapplication.Main

@@ -49,6 +49,7 @@ dependencies {
     testCompile 'com.googlecode.catch-exception:catch-exception:1.2.0'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile "org.mongolink:mongolink-testtools:$mongoLinkVersion"
+    testCompile 'com.github.fakemongo:fongo:1.4.1'
 
 }
 

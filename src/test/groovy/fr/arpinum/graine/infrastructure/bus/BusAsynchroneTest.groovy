@@ -167,11 +167,6 @@ public class BusAsynchroneTest extends Specification {
             return "42";
         }
 
-        @Override
-        public Class<FauxMessage> typeCommande() {
-            return FauxMessage.class;
-        }
-
         public void renvoieException() {
             this.exception = true;
         }

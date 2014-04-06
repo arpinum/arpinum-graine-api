@@ -48,5 +48,5 @@ public abstract class BaseApplication extends Application {
 
     protected abstract GuiceRouter routes();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseApplication.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BaseApplication.class);
 }
