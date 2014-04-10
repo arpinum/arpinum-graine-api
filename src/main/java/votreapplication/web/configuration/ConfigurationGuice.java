@@ -17,7 +17,6 @@ import fr.arpinum.graine.commande.ValidateurCommande;
 import fr.arpinum.graine.infrastructure.bus.guice.BusMagique;
 import fr.arpinum.graine.infrastructure.persistance.mongo.ContexteMongoLink;
 import fr.arpinum.graine.infrastructure.persistance.mongo.LocalisateurEntrepotsMongoLink;
-import fr.arpinum.graine.modele.LocalisateurEntrepots;
 import fr.arpinum.graine.modele.evenement.BusEvenement;
 import fr.arpinum.graine.modele.evenement.BusEvenementAsynchrone;
 import fr.arpinum.graine.recherche.BusRecherche;
@@ -27,6 +26,7 @@ import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
 import org.mongolink.domain.UpdateStrategies;
 import org.mongolink.domain.mapper.ContextBuilder;
+import votreapplication.modele.LocalisateurEntrepots;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -36,7 +36,7 @@ import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.Properties;
 
-public class VotreApplicationModule extends AbstractModule {
+public class ConfigurationGuice extends AbstractModule {
     @Override
     protected void configure() {
         Names.bindProperties(binder(), propriétés());
@@ -48,7 +48,7 @@ public class VotreApplicationModule extends AbstractModule {
     }
 
     private Properties propriétés() {
-        URL url = Resources.getResource("env/" + Optional.ofNullable(System.getenv("env")).orElse("dev") + "/votreapplication.properties");
+        URL url = Resources.getResource("env/" + Optional.ofNullable(System.getenv("env")).orElse("dev") + "/application.properties");
         ByteSource inputSupplier = Resources
                 .asByteSource(url);
         Properties propriétés = new Properties();

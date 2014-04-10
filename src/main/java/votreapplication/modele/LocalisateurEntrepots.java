@@ -1,4 +1,4 @@
-package fr.arpinum.graine.modele;
+package votreapplication.modele;
 
 public abstract class LocalisateurEntrepots {
 
