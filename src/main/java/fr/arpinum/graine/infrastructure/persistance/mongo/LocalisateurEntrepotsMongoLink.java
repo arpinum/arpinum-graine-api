@@ -4,8 +4,8 @@ import fr.arpinum.graine.modele.LocalisateurEntrepots;
 
 import javax.inject.Inject;
 
-@SuppressWarnings("UnusedDeclaration")
-public abstract class LocalisateurEntrepotsMongoLink implements LocalisateurEntrepots {
+
+public class LocalisateurEntrepotsMongoLink extends LocalisateurEntrepots {
 
     @Inject
     public LocalisateurEntrepotsMongoLink(ContexteMongoLink contexteMongoLink) {

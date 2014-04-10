@@ -1,5 +1,6 @@
 package votreapplication.web.configuration;
 
+import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
@@ -15,6 +16,10 @@ import fr.arpinum.graine.commande.SynchronisationCommande;
 import fr.arpinum.graine.commande.ValidateurCommande;
 import fr.arpinum.graine.infrastructure.bus.guice.BusMagique;
 import fr.arpinum.graine.infrastructure.persistance.mongo.ContexteMongoLink;
+import fr.arpinum.graine.infrastructure.persistance.mongo.LocalisateurEntrepotsMongoLink;
+import fr.arpinum.graine.modele.LocalisateurEntrepots;
+import fr.arpinum.graine.modele.evenement.BusEvenement;
+import fr.arpinum.graine.modele.evenement.BusEvenementAsynchrone;
 import fr.arpinum.graine.recherche.BusRecherche;
 import fr.arpinum.graine.recherche.HandlerRecherche;
 import org.jongo.Jongo;
@@ -39,6 +44,7 @@ public class VotreApplicationModule extends AbstractModule {
         configurePersistance(multibinder);
         configureCommandes(multibinder);
         configureRecherches();
+        configureEvements();
     }
 
     private Properties propriétés() {
@@ -47,7 +53,7 @@ public class VotreApplicationModule extends AbstractModule {
                 .asByteSource(url);
         Properties propriétés = new Properties();
         try {
-            propriétés.load(inputSupplier.getInput());
+            propriétés.load(inputSupplier.openStream());
         } catch (IOException e) {
 
         }
@@ -56,6 +62,7 @@ public class VotreApplicationModule extends AbstractModule {
 
     private void configurePersistance(Multibinder<SynchronisationCommande> multibinder) {
         multibinder.addBinding().to(ContexteMongoLink.class).in(Singleton.class);
+        bind(LocalisateurEntrepots.class).to(LocalisateurEntrepotsMongoLink.class).in(Singleton.class);
     }
 
     private void configureRecherches() {
@@ -69,12 +76,17 @@ public class VotreApplicationModule extends AbstractModule {
         bind(BusCommande.class).asEagerSingleton();
     }
 
+    private void configureEvements() {
+        bind(BusEvenement.class).toInstance(new BusEvenementAsynchrone(Sets.newHashSet(), Sets.newHashSet()));
+    }
+
     @Provides
     public Validator validator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
     @Provides
+    @Singleton
     public MongoSessionManager mongoLink(ConfigurationMongoDb configurationMongoDb) {
         Settings settings = Settings.defaultInstance().withDefaultUpdateStrategy(UpdateStrategies.DIFF)
                 .withDbName(configurationMongoDb.name)
@@ -89,6 +101,7 @@ public class VotreApplicationModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     public Jongo jongo(ConfigurationMongoDb configurationMongoDb) throws UnknownHostException {
         final MongoClient mongoClient = new MongoClient(configurationMongoDb.host, configurationMongoDb.port);
         final DB db = mongoClient.getDB(configurationMongoDb.name);
