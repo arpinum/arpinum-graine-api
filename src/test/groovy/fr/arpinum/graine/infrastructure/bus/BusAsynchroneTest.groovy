@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 import java.util.concurrent.ExecutorService
 
-import static org.mockito.Mockito.*
+import static org.mockito.Mockito.mock
 
 public class BusAsynchroneTest extends Specification {
 

@@ -6,7 +6,7 @@ import org.restlet.resource.ServerResource;
 public class IndexRessource extends ServerResource {
 
     @Get
-    public String représent() {
+    public String représente() {
         return "Hello world";
     }
 }
