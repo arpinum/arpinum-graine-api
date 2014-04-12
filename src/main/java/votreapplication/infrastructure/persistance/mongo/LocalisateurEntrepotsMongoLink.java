@@ -1,5 +1,6 @@
-package fr.arpinum.graine.infrastructure.persistance.mongo;
+package votreapplication.infrastructure.persistance.mongo;
 
+import fr.arpinum.graine.infrastructure.persistance.mongo.ContexteMongoLink;
 import votreapplication.modele.LocalisateurEntrepots;
 
 import javax.inject.Inject;

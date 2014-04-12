@@ -16,7 +16,6 @@ import fr.arpinum.graine.commande.SynchronisationCommande;
 import fr.arpinum.graine.commande.ValidateurCommande;
 import fr.arpinum.graine.infrastructure.bus.guice.BusMagique;
 import fr.arpinum.graine.infrastructure.persistance.mongo.ContexteMongoLink;
-import fr.arpinum.graine.infrastructure.persistance.mongo.LocalisateurEntrepotsMongoLink;
 import fr.arpinum.graine.modele.evenement.BusEvenement;
 import fr.arpinum.graine.modele.evenement.BusEvenementAsynchrone;
 import fr.arpinum.graine.recherche.BusRecherche;
@@ -26,6 +25,7 @@ import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
 import org.mongolink.domain.UpdateStrategies;
 import org.mongolink.domain.mapper.ContextBuilder;
+import votreapplication.infrastructure.persistance.mongo.LocalisateurEntrepotsMongoLink;
 import votreapplication.modele.LocalisateurEntrepots;
 
 import javax.validation.Validation;

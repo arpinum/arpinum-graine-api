@@ -16,5 +16,12 @@ public abstract class HandlerRechercheJongo<TRecherche extends Recherche<TRepons
         this.jongo = jongo;
     }
 
+    @Override
+    public final TReponse execute(TRecherche recherche) {
+        return execute(recherche, jongo);
+    }
+
+    protected abstract TReponse execute(TRecherche tRecherche, Jongo jongo);
+
     private Jongo jongo;
 }

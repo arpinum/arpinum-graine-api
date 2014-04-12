@@ -1,30 +1,27 @@
 package fr.arpinum.graine.infrastructure.persistance.mongo
 
-import org.mongolink.test.MongolinkRule
+import org.junit.Rule
 import spock.lang.Specification
 
 class EntrepotMongoTest extends Specification {
 
-    def setup() {
-        mongolink = MongolinkRule.withPackage("fr.arpinum.graine.infrastructure.persistance.mongo.mapping")
-        mongolink.before()
-        entrepot = new EntrepotFausseRacine(mongolink.currentSession)
-    }
+    @Rule
+    public AvecMongolink mongolink = AvecMongolink.avecPackage("fr.arpinum.graine.infrastructure.persistance.mongo.mapping")
 
-    def cleanup() {
-        mongolink.after()
+    def setup() {
+        entrepot = new EntrepotFausseRacine(mongolink.sessionCourante())
     }
 
     def "peut ajouter"() {
         when:
         entrepot.ajoute(new FausseRacine("1"))
-        mongolink.cleanSession();
+        mongolink.nettoieSession();
 
         then:
-        def racineTrouvé = entrepot.get("1")
-        racineTrouvé != null
-        racineTrouvé.id == "1"
+        def elementTrouvé = mongolink.collection("fausseracine").findOne(_id: "1")
+        elementTrouvé != null
     }
+
 
     def "peut supprimer"() {
         given:
@@ -33,13 +30,13 @@ class EntrepotMongoTest extends Specification {
 
         when:
         entrepot.supprime(racine)
-        mongolink.cleanSession()
+        mongolink.nettoieSession()
 
         then:
         entrepot.get("1") == null
     }
 
-    MongolinkRule mongolink
+
     EntrepotFausseRacine entrepot
 
 }

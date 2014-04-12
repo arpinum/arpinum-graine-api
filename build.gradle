@@ -36,7 +36,7 @@ dependencies {
     compile 'org.glassfish.web:javax.el:2.2.4'
 
     compile "org.mongolink:mongolink:$mongoLinkVersion"
-    compile 'org.jongo:jongo:0.4'
+    compile 'org.jongo:jongo:1.0'
 
     compile 'org.slf4j:jul-to-slf4j:1.7.2'
     compile 'ch.qos.logback:logback-classic:1.0.13'
@@ -52,6 +52,7 @@ dependencies {
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile "org.mongolink:mongolink-testtools:$mongoLinkVersion"
     testCompile 'com.github.fakemongo:fongo:1.4.1'
+    testCompile 'com.gmongo:gmongo:1.3'
 
 }
 

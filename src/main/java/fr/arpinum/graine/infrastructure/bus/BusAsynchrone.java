@@ -3,6 +3,8 @@ package fr.arpinum.graine.infrastructure.bus;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +41,7 @@ public abstract class BusAsynchrone implements Bus {
                 return ResultatExecution.succes(reponse);
             } catch (Throwable e) {
                 synchronisations.forEach(SynchronisationBus::surErreur);
+                LOGGER.error("Erreur sur message {} : {}", message, e.getMessage());
                 return ResultatExecution.erreur(e);
             } finally {
                 synchronisations.forEach(SynchronisationBus::finalement);
@@ -56,4 +59,6 @@ public abstract class BusAsynchrone implements Bus {
             Executors.newCachedThreadPool(
                     new ThreadFactoryBuilder().setNameFormat("bus-commande-%d").build())
     );
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(BusAsynchrone.class);
 }
