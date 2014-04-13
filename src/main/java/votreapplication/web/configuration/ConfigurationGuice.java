@@ -61,7 +61,8 @@ public class ConfigurationGuice extends AbstractModule {
     }
 
     private void configurePersistance(Multibinder<SynchronisationCommande> multibinder) {
-        multibinder.addBinding().to(ContexteMongoLink.class).in(Singleton.class);
+        bind(ContexteMongoLink.class).in(Singleton.class);
+        multibinder.addBinding().to(ContexteMongoLink.class);
         bind(LocalisateurEntrepots.class).to(LocalisateurEntrepotsMongoLink.class).in(Singleton.class);
     }
 

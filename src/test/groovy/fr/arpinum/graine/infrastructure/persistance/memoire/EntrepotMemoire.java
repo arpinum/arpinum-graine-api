@@ -24,5 +24,5 @@ public class EntrepotMemoire<TId, TRacine extends Racine<TId>> implements Entrep
         entites.remove(racine);
     }
 
-    private final Set<TRacine> entites = Sets.newHashSet();
+    protected final Set<TRacine> entites = Sets.newHashSet();
 }
