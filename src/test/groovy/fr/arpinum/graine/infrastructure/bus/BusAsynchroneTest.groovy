@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 import java.util.concurrent.ExecutorService
 
-import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.*
 
 public class BusAsynchroneTest extends Specification {
 
@@ -119,8 +119,26 @@ public class BusAsynchroneTest extends Specification {
         réponse.erreur().message == "Ceci est une erreur"
     }
 
+    def "retourne une erreur si aucun handler"() {
+        given:
+        def bus = unBusVide()
+
+        when:
+        def promesse = bus.poste(new FauxMessage())
+
+        then:
+        promesse != null
+        def resultatExecution = promesse.get()
+        resultatExecution.isErreur()
+        resultatExecution.erreur() instanceof ErreurBus
+    }
+
+    def unBusVide() {
+        new BusAsynchrone(Sets.newHashSet(), Sets.newHashSet()) {}
+    }
+
     private BusAsynchrone bus() {
-        return new BusAsynchrone(Sets.newHashSet(mock(SynchronisationBus.class)), Sets.newHashSet(new FausseCommandeHandler())) {
+        new BusAsynchrone(Sets.newHashSet(mock(SynchronisationBus.class)), Sets.newHashSet(new FausseCommandeHandler())) {
         };
     }
 
@@ -141,11 +159,11 @@ public class BusAsynchroneTest extends Specification {
     }
 
     private BusAsynchrone busAvec(FausseCommandeHandler handler) {
-        return busAvec(handler, mock(SynchronisationBus.class))
+        busAvec(handler, mock(SynchronisationBus.class))
     }
 
     private FausseCommandeHandler unHandler() {
-        return new FausseCommandeHandler()
+        new FausseCommandeHandler()
     }
 
     private class FauxMessage implements Message<String> {

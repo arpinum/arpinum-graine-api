@@ -29,6 +29,10 @@ public abstract class BusAsynchrone implements Bus {
     @Override
     public <TReponse> ListenableFuture<ResultatExecution<TReponse>> poste(Message<TReponse> message) {
         final HandlerMessage handlerMessage = handlers.get(message.getClass());
+        if (handlerMessage == null) {
+            LOGGER.warn("Impossible de trouver un handler pour {}", message.getClass());
+            return Futures.immediateFuture(ResultatExecution.erreur(new ErreurBus("Impossible de trouver un handler")));
+        }
         return executorService.submit(execute(message, handlerMessage));
     }
 
