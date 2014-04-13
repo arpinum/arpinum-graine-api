@@ -61,7 +61,7 @@ public abstract class BusAsynchrone implements Bus {
     private final Map<Class<?>, HandlerMessage> handlers = Maps.newConcurrentMap();
     private ListeningExecutorService executorService = MoreExecutors.listeningDecorator(
             Executors.newCachedThreadPool(
-                    new ThreadFactoryBuilder().setNameFormat("bus-commande-%d").build())
+                    new ThreadFactoryBuilder().setNameFormat(getClass().getSimpleName() + "-%d").build())
     );
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BusAsynchrone.class);
