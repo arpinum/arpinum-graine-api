@@ -2,12 +2,13 @@ package fr.arpinum.graine.infrastructure.persistance.mongo;
 
 import fr.arpinum.graine.commande.SynchronisationCommande;
 import fr.arpinum.graine.infrastructure.bus.Message;
+import fr.arpinum.graine.modele.evenement.SynchronisationEvenement;
 import org.mongolink.MongoSession;
 import org.mongolink.MongoSessionManager;
 
 import javax.inject.Inject;
 
-public class ContexteMongoLink implements SynchronisationCommande {
+public class ContexteMongoLink implements SynchronisationCommande, SynchronisationEvenement {
 
 
     @Inject

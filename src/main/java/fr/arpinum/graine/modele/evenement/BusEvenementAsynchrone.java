@@ -1,8 +1,6 @@
 package fr.arpinum.graine.modele.evenement;
 
 import fr.arpinum.graine.infrastructure.bus.BusAsynchrone;
-import fr.arpinum.graine.infrastructure.bus.HandlerMessage;
-import fr.arpinum.graine.infrastructure.bus.SynchronisationBus;
 
 import javax.inject.Inject;
 import java.util.Set;
@@ -11,7 +9,7 @@ import java.util.Set;
 public class BusEvenementAsynchrone extends BusAsynchrone implements BusEvenement {
 
     @Inject
-    public BusEvenementAsynchrone(Set<? extends SynchronisationBus> synchronisations, Set<? extends HandlerMessage> handlers) {
+    public BusEvenementAsynchrone(Set<SynchronisationEvenement> synchronisations, Set<HandlerEvenement> handlers) {
         super(synchronisations, handlers);
     }
 
