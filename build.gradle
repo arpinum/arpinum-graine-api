@@ -24,7 +24,11 @@ dependencies {
     compile 'com.google.guava:guava:16.0.1'
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     compile "com.google.inject:guice:$guiceVersion"
-    compile 'org.reflections:reflections:0.9.9-RC1'
+    compile('org.reflections:reflections:0.9.9-RC1') {
+        exclude group: 'org.javassist'
+    }
+    compile 'org.javassist:javassist:3.18.1-GA'
+
 
     compile "org.restlet.jse:org.restlet:$restletVersion"
     compile "org.restlet.jse:org.restlet.ext.json:$restletVersion"
