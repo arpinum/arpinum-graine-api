@@ -23,7 +23,7 @@ class AvecJongo extends ExternalResource {
     }
 
     public DB db() {
-        return new GMongo(fongo.mongo);
+        return new GMongo(fongo.mongo).getDB("test");
     }
 
     public DBCollection collection(String collection) {
