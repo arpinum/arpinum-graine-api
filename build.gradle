@@ -10,7 +10,7 @@ repositories {
 compileJava.options.encoding = 'UTF-8'
 
 project.ext.with {
-    set "restletVersion", "2.1.7"
+    set "restletVersion", "2.2.0"
     set "mongoLinkVersion", "1.0.1"
     set "guiceVersion", "4.0-beta4"
 }
@@ -34,6 +34,7 @@ dependencies {
     compile "org.restlet.jse:org.restlet.ext.json:$restletVersion"
     compile "org.restlet.jse:org.restlet.ext.jackson:${restletVersion}"
     compile "org.restlet.jse:org.restlet.ext.jetty:$restletVersion"
+    compile "org.restlet.jse:org.restlet.ext.jsslutils:$restletVersion"
 
     compile 'org.hibernate:hibernate-validator:5.0.3.Final'
     compile 'javax.el:javax.el-api:2.2.4'
