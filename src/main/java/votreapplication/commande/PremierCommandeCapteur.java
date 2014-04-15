@@ -1,8 +1,8 @@
 package votreapplication.commande;
 
-import fr.arpinum.graine.commande.HandlerCommande;
+import fr.arpinum.graine.commande.CapteurCommande;
 
-public class PremierCommandeHandler implements HandlerCommande<PremiereCommande, String> {
+public class PremierCommandeCapteur implements CapteurCommande<PremiereCommande, String> {
 
     @Override
     public String execute(PremiereCommande premiereCommande) {

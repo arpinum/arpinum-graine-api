@@ -1,9 +1,9 @@
 package votreapplication.recherche;
 
-import fr.arpinum.graine.recherche.HandlerRechercheJongo;
+import fr.arpinum.graine.recherche.CapteurRechercheJongo;
 import org.jongo.Jongo;
 
-public class PremierHandlerRecherche extends HandlerRechercheJongo<PremiereRecherche, String> {
+public class PremierCapteurRecherche extends CapteurRechercheJongo<PremiereRecherche, String> {
 
 
     @Override

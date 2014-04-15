@@ -9,7 +9,7 @@ import java.util.Set;
 public class BusEvenementAsynchrone extends BusAsynchrone implements BusEvenement {
 
     @Inject
-    public BusEvenementAsynchrone(Set<SynchronisationEvenement> synchronisations, Set<HandlerEvenement> handlers) {
+    public BusEvenementAsynchrone(Set<SynchronisationEvenement> synchronisations, Set<CapteurEvenement> handlers) {
         super(synchronisations, handlers);
     }
 

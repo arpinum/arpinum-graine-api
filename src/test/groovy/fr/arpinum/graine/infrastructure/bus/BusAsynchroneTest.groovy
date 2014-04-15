@@ -59,7 +59,7 @@ public class BusAsynchroneTest extends Specification {
 
     def "sur une erreur appelle tout de même la synchronisation"() {
         given:
-        def handler = new FausseCommandeHandler()
+        def handler = new FausseCommandeCapteur()
         handler.renvoieException()
         def synchronisationBus = Mock(SynchronisationBus)
         def bus = busAvec(handler, synchronisationBus)
@@ -76,7 +76,7 @@ public class BusAsynchroneTest extends Specification {
 
     def "retourne le résultat d'une commande"() {
         given:
-        def handler = new FausseCommandeHandler()
+        def handler = new FausseCommandeCapteur()
         def bus = busAvec(handler)
 
         when:
@@ -91,7 +91,7 @@ public class BusAsynchroneTest extends Specification {
 
     def "peut retourner directement le résultat"() {
         given:
-        def handler = new FausseCommandeHandler()
+        def handler = new FausseCommandeCapteur()
         def bus = busAvec(handler)
 
         when:
@@ -103,7 +103,7 @@ public class BusAsynchroneTest extends Specification {
 
     def "retourne un résultat sur erreur"() {
         setup:
-        def handler = new FausseCommandeHandler()
+        def handler = new FausseCommandeCapteur()
         handler.renvoieException();
         def bus = busAvec(handler);
 
@@ -138,11 +138,11 @@ public class BusAsynchroneTest extends Specification {
     }
 
     private BusAsynchrone bus() {
-        new BusAsynchrone(Sets.newHashSet(mock(SynchronisationBus.class)), Sets.newHashSet(new FausseCommandeHandler())) {
+        new BusAsynchrone(Sets.newHashSet(mock(SynchronisationBus.class)), Sets.newHashSet(new FausseCommandeCapteur())) {
         };
     }
 
-    private BusAsynchrone busAvec(FausseCommandeHandler handler, SynchronisationBus synchronisationBus) {
+    private BusAsynchrone busAvec(FausseCommandeCapteur handler, SynchronisationBus synchronisationBus) {
         final BusAsynchrone bus = new BusAsynchrone(Sets.newHashSet(synchronisationBus), Sets.newHashSet(handler)) {
 
         }
@@ -158,12 +158,12 @@ public class BusAsynchroneTest extends Specification {
         return busAvec(unHandler(), synchro)
     }
 
-    private BusAsynchrone busAvec(FausseCommandeHandler handler) {
+    private BusAsynchrone busAvec(FausseCommandeCapteur handler) {
         busAvec(handler, mock(SynchronisationBus.class))
     }
 
-    private FausseCommandeHandler unHandler() {
-        new FausseCommandeHandler()
+    private FausseCommandeCapteur unHandler() {
+        new FausseCommandeCapteur()
     }
 
     private class FauxMessage implements Message<String> {
@@ -174,7 +174,7 @@ public class BusAsynchroneTest extends Specification {
 
     }
 
-    private class FausseCommandeHandler implements HandlerMessage<FauxMessage, String> {
+    private class FausseCommandeCapteur implements CapteurMessage<FauxMessage, String> {
 
         @Override
         public String execute(FauxMessage commande) {
