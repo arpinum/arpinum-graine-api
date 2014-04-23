@@ -25,6 +25,11 @@ public class BusEvenementAsynchrone extends BusAsynchrone implements BusEvenemen
     }
 
     @Override
+    public void surErreur() {
+        évènements.get().clear();
+    }
+
+    @Override
     public void publie(Evenement evenement) {
         évènements.get().add(evenement);
     }
