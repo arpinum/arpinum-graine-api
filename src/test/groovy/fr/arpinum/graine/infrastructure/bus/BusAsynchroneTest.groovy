@@ -21,7 +21,7 @@ public class BusAsynchroneTest extends Specification {
         def commande = new FauxMessage()
 
         when:
-        bus.poste(commande)
+        bus.envoie(commande)
 
         then:
         handler.commandeReçue == commande
@@ -34,7 +34,7 @@ public class BusAsynchroneTest extends Specification {
         bus.setExecutor(executor)
 
         when:
-        bus.poste(new FauxMessage())
+        bus.envoie(new FauxMessage())
 
         then:
         1 * executor.execute(!null)
@@ -48,7 +48,7 @@ public class BusAsynchroneTest extends Specification {
         def commande = new FauxMessage()
 
         when:
-        bus.poste(commande)
+        bus.envoie(commande)
 
         then:
         1 * synchro.avantExecution(commande)
@@ -65,7 +65,7 @@ public class BusAsynchroneTest extends Specification {
         def bus = busAvec(handler, synchronisationBus)
 
         when:
-        bus.poste new FauxMessage()
+        bus.envoie new FauxMessage()
 
         then:
         1 * synchronisationBus.surErreur()
@@ -80,7 +80,7 @@ public class BusAsynchroneTest extends Specification {
         def bus = busAvec(handler)
 
         when:
-        final ListenableFuture<ResultatExecution<String>> promesse = bus.poste(new FauxMessage())
+        final ListenableFuture<ResultatExecution<String>> promesse = bus.envoie(new FauxMessage())
 
         then:
         promesse != null
@@ -95,7 +95,7 @@ public class BusAsynchroneTest extends Specification {
         def bus = busAvec(handler)
 
         when:
-        def résultat = bus.posteToutDeSuite(new FauxMessage())
+        def résultat = bus.envoieEtAttendReponse(new FauxMessage())
 
         then:
         résultat != null
@@ -108,7 +108,7 @@ public class BusAsynchroneTest extends Specification {
         def bus = busAvec(handler);
 
         when:
-        final ListenableFuture<ResultatExecution<String>> promesse = bus.poste(new FauxMessage())
+        final ListenableFuture<ResultatExecution<String>> promesse = bus.envoie(new FauxMessage())
 
         then:
         promesse != null
@@ -124,7 +124,7 @@ public class BusAsynchroneTest extends Specification {
         def bus = unBusVide()
 
         when:
-        def promesse = bus.poste(new FauxMessage())
+        def promesse = bus.envoie(new FauxMessage())
 
         then:
         promesse != null

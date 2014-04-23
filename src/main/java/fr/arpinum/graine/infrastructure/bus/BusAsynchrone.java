@@ -22,17 +22,18 @@ public abstract class BusAsynchrone implements Bus {
     }
 
     @Override
-    public <TReponse> ResultatExecution<TReponse> posteToutDeSuite(Message<TReponse> message) {
-        return Futures.getUnchecked(poste(message));
+    public <TReponse> ResultatExecution<TReponse> envoieEtAttendReponse(Message<TReponse> message) {
+        return Futures.getUnchecked(envoie(message));
     }
 
     @Override
-    public <TReponse> ListenableFuture<ResultatExecution<TReponse>> poste(Message<TReponse> message) {
+    public <TReponse> ListenableFuture<ResultatExecution<TReponse>> envoie(Message<TReponse> message) {
         final CapteurMessage capteurMessage = handlers.get(message.getClass());
         if (capteurMessage == null) {
             LOGGER.warn("Impossible de trouver un handler pour {}", message.getClass());
             return Futures.immediateFuture(ResultatExecution.erreur(new ErreurBus("Impossible de trouver un handler")));
         }
+        LOGGER.debug("Exécution capteur pour {}", message.getClass());
         return executorService.submit(execute(message, capteurMessage));
     }
 
@@ -64,5 +65,5 @@ public abstract class BusAsynchrone implements Bus {
                     new ThreadFactoryBuilder().setNameFormat(getClass().getSimpleName() + "-%d").build())
     );
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(BusAsynchrone.class);
+    protected final static Logger LOGGER = LoggerFactory.getLogger(BusAsynchrone.class);
 }

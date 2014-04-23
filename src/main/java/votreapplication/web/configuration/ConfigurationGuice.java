@@ -38,15 +38,16 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 public class ConfigurationGuice extends AbstractModule {
     @Override
     protected void configure() {
         Names.bindProperties(binder(), propriétés());
         configurePersistance();
+        configureEvements();
         configureCommandes();
         configureRecherches();
-        configureEvements();
     }
 
     private Properties propriétés() {
@@ -77,6 +78,7 @@ public class ConfigurationGuice extends AbstractModule {
         final Multibinder<SynchronisationCommande> multibinder = Multibinder.newSetBinder(binder(), SynchronisationCommande.class);
         multibinder.addBinding().to(ValidateurCommande.class);
         multibinder.addBinding().to(ContexteMongoLink.class);
+        multibinder.addBinding().to(BusEvenementAsynchrone.class);
         BusMagique.scanPackageEtBind("votreapplication.commande", CapteurCommande.class, binder());
         bind(BusCommande.class).asEagerSingleton();
     }
@@ -89,6 +91,13 @@ public class ConfigurationGuice extends AbstractModule {
     }
 
     @Provides
+    @Singleton
+    BusEvenementAsynchrone busEvenementAsynchrone(Set<SynchronisationEvenement> synchronisationEvenements, Set<CapteurEvenement> evenements) {
+        return new BusEvenementAsynchrone(synchronisationEvenements, evenements);
+    }
+
+    @Provides
+    @Singleton
     public Validator validator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
     }
