@@ -48,10 +48,9 @@ class BusEvenementAsynchroneTest extends Specification {
     }
 
     private unExécuteurQuiRetourne(future) {
-        def service = [submit: {
+        [submit: {
             return future
         }] as ListeningExecutorService
-        service
     }
 
     private busAvec(CapteurEvenement<?> capteur) {
