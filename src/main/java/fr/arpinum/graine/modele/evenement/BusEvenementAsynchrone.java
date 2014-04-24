@@ -20,8 +20,18 @@ public class BusEvenementAsynchrone extends BusAsynchrone implements BusEvenemen
     public void apresExecution() {
         LOGGER.debug("Propagation des évènements");
         while (!évènements.get().isEmpty()) {
-            envoie(évènements.get().poll());
+            final Evenement evenement = évènements.get().poll();
+            if (estSynchrone(evenement)) {
+                envoieEtAttendReponse(evenement);
+            } else {
+                envoie(evenement);
+            }
         }
+    }
+
+    private boolean estSynchrone(Evenement evenement) {
+        return evenement.getClass().getAnnotation(Synchrone.class) != null;
+
     }
 
     @Override
