@@ -1,5 +1,3 @@
-[ ![Codeship Status for arpinum/arpinum-seed-java](https://www.codeship.io/projects/8528db20-997c-0131-fb57-5670ddce16b6/status?branch=master)](https://www.codeship.io/projects/17332)
-
 # Arpinum Seed - API
 
 ## Le but 
