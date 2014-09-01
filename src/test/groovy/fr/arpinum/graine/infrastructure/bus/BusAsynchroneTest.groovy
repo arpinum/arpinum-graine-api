@@ -133,6 +133,20 @@ public class BusAsynchroneTest extends Specification {
         resultatExecution.erreur() instanceof ErreurBus
     }
 
+    def "peut exécuter plusieurs handlers"() {
+        given:
+        def capteurs = [new FausseCommandeCapteur(), new FausseCommandeCapteur()]
+        def bus = new BusAsynchrone(Sets.newHashSet(), capteurs) {}
+        def message = new FauxMessage()
+
+        when:
+        bus.envoie(message)
+
+        then:
+        capteurs[0].commandeReçue == message
+        capteurs[1].commandeReçue == message
+    }
+
     def unBusVide() {
         new BusAsynchrone(Sets.newHashSet(), Sets.newHashSet()) {}
     }

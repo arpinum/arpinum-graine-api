@@ -1,16 +1,12 @@
 package fr.arpinum.graine.infrastructure.bus;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.common.util.concurrent.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
+import java.util.concurrent.*;
 
 public abstract class BusAsynchrone implements Bus {
 
@@ -28,13 +24,17 @@ public abstract class BusAsynchrone implements Bus {
 
     @Override
     public <TReponse> ListenableFuture<ResultatExecution<TReponse>> envoie(Message<TReponse> message) {
-        final CapteurMessage capteurMessage = handlers.get(message.getClass());
-        if (capteurMessage == null) {
+        final Collection<CapteurMessage> capteurs = handlers.get(message.getClass());
+        if (capteurs.size() == 0) {
             LOGGER.warn("Impossible de trouver un handler pour {}", message.getClass());
             return Futures.immediateFuture(ResultatExecution.erreur(new ErreurBus("Impossible de trouver un handler")));
         }
         LOGGER.debug("Exécution capteur pour {}", message.getClass());
-        return executorService.submit(execute(message, capteurMessage));
+        List<ListenableFuture<ResultatExecution<TReponse>>> futures = Lists.newArrayList();
+        capteurs.forEach(c ->
+                        futures.add(executorService.submit(execute(message, c)))
+        );
+        return futures.get(0);
     }
 
     private <TReponse> Callable<ResultatExecution<TReponse>> execute(Message<TReponse> message, CapteurMessage<Message<TReponse>, TReponse> capteurMessage) {
@@ -58,8 +58,8 @@ public abstract class BusAsynchrone implements Bus {
         this.executorService = MoreExecutors.listeningDecorator(executor);
     }
 
-    private final Set<SynchronisationBus> synchronisations = Sets.newHashSet();
-    private final Map<Class<?>, CapteurMessage> handlers = Maps.newConcurrentMap();
+    private final List<SynchronisationBus> synchronisations = Lists.newArrayList();
+    private final Multimap<Class<?>, CapteurMessage> handlers = ArrayListMultimap.create();
     private ListeningExecutorService executorService = MoreExecutors.listeningDecorator(
             Executors.newCachedThreadPool(
                     new ThreadFactoryBuilder().setNameFormat(getClass().getSimpleName() + "-%d").build())
