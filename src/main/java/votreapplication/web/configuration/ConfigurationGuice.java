@@ -24,7 +24,7 @@ import fr.arpinum.graine.recherche.CapteurRecherche;
 import org.jongo.Jongo;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
-import org.mongolink.domain.UpdateStrategies;
+import org.mongolink.UpdateStrategies;
 import org.mongolink.domain.mapper.ContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
