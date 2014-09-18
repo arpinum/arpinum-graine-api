@@ -137,6 +137,7 @@ public class BusAsynchroneTest extends Specification {
         given:
         def capteurs = [new FausseCommandeCapteur(), new FausseCommandeCapteur()]
         def bus = new BusAsynchrone(Sets.newHashSet(), capteurs) {}
+        bus.setExecutor(executeur())
         def message = new FauxMessage()
 
         when:

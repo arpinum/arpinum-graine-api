@@ -2,23 +2,15 @@ package votreapplication.web.configuration;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import fr.arpinum.graine.commande.BusCommande;
-import fr.arpinum.graine.commande.CapteurCommande;
-import fr.arpinum.graine.commande.SynchronisationCommande;
-import fr.arpinum.graine.commande.ValidateurCommande;
+import fr.arpinum.graine.commande.*;
 import fr.arpinum.graine.infrastructure.bus.guice.BusMagique;
 import fr.arpinum.graine.infrastructure.persistance.mongo.ContexteMongoLink;
-import fr.arpinum.graine.modele.evenement.BusEvenement;
-import fr.arpinum.graine.modele.evenement.BusEvenementAsynchrone;
-import fr.arpinum.graine.modele.evenement.CapteurEvenement;
-import fr.arpinum.graine.modele.evenement.SynchronisationEvenement;
+import fr.arpinum.graine.modele.evenement.*;
 import fr.arpinum.graine.recherche.BusRecherche;
 import fr.arpinum.graine.recherche.CapteurRecherche;
 import org.jongo.Jongo;
@@ -36,9 +28,7 @@ import javax.validation.Validator;
 import java.io.IOException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class ConfigurationGuice extends AbstractModule {
     @Override
@@ -76,8 +66,8 @@ public class ConfigurationGuice extends AbstractModule {
 
     private void configureCommandes() {
         final Multibinder<SynchronisationCommande> multibinder = Multibinder.newSetBinder(binder(), SynchronisationCommande.class);
-        multibinder.addBinding().to(ValidateurCommande.class);
         multibinder.addBinding().to(ContexteMongoLink.class);
+        multibinder.addBinding().to(ValidateurCommande.class);
         multibinder.addBinding().to(BusEvenementAsynchrone.class);
         BusMagique.scanPackageEtBind("votreapplication.commande", CapteurCommande.class, binder());
         bind(BusCommande.class).asEagerSingleton();
