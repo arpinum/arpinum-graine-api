@@ -9,7 +9,7 @@ repositories {
 compileJava.options.encoding = 'UTF-8'
 
 ext {
-    restletVersion = "2.2.0"
+    restletVersion = "2.2.3"
     mongoLinkVersion = "1.1.6"
     guiceVersion = "4.0-beta4"
 }
