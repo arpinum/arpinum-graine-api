@@ -1,43 +1,44 @@
 package fr.arpinum.graine.web.restlet.status;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.data.Status;
-import org.restlet.representation.Representation;
-import org.restlet.service.StatusService;
+import com.google.common.collect.*;
+import org.restlet.*;
+import org.restlet.data.*;
+import org.restlet.representation.*;
+import org.restlet.service.*;
 
-import java.util.List;
+import java.util.*;
 
 public class ApplicationStatusService extends StatusService {
     @Override
     public Status getStatus(Throwable throwable, Request request, Response response) {
-        Optional<ResolveurException> resolveur = resolveur(throwable);
+        Optional<ExceptionResolver> resolveur = resolver(throwable.getCause());
         if (resolveur.isPresent()) {
-            return resolveur.get().status();
+            return resolveur.get().status(throwable.getCause());
         }
         return super.getStatus(throwable, request, response);
     }
 
     @Override
     public Representation getRepresentation(Status status, Request request, Response response) {
-        Optional<ResolveurException> resolveur = resolveur(status.getThrowable());
+        Optional<ExceptionResolver> resolveur = resolver(status.getThrowable());
         if (resolveur.isPresent()) {
             return resolveur.get().representation(status.getThrowable());
         }
         return super.getRepresentation(status, request, response);
     }
 
-    private Optional<ResolveurException> resolveur(Throwable throwable) {
-        for (ResolveurException resolveur : resolveurs) {
-            if (resolveur.peutRésourdre(throwable)) return Optional.of(resolveur);
+    private Optional<ExceptionResolver> resolver(Throwable throwable) {
+        for (ExceptionResolver resolveur : resolvers) {
+            if (resolveur.canResolve(throwable)) return Optional.of(resolveur);
         }
         return Optional.absent();
     }
 
-    private List<? extends ResolveurException> resolveurs = Lists.newArrayList(
-            new ResolveurValidationException()
+    private List<ExceptionResolver> resolvers = Lists.newArrayList(
+            new ValidationExceptionResolver(),
+            new NotAllowedExceptionResolver(),
+            new BusinessErrorResolver()
     );
 
 }

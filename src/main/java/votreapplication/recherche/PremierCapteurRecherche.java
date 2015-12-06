@@ -1,13 +1,12 @@
 package votreapplication.recherche;
 
-import fr.arpinum.graine.recherche.CapteurRechercheJongo;
-import org.jongo.Jongo;
+import fr.arpinum.graine.recherche.ResearchHandler;
 
-public class PremierCapteurRecherche extends CapteurRechercheJongo<PremiereRecherche, String> {
+public class PremierCapteurRecherche implements ResearchHandler<PremiereRecherche,String> {
 
 
     @Override
-    protected String execute(PremiereRecherche premiereRecherche, Jongo jongo) {
+    public String execute(PremiereRecherche premiereRecherche) {
         return null;
     }
 }

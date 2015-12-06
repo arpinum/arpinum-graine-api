@@ -1,17 +1,14 @@
 package fr.arpinum.graine.web.restlet;
 
-import fr.arpinum.graine.web.restlet.filtre.FiltreCors;
-import fr.arpinum.graine.web.restlet.router.GuiceRouter;
 import fr.arpinum.graine.web.restlet.status.ApplicationStatusService;
-import org.restlet.Application;
-import org.restlet.Context;
-import org.restlet.Restlet;
+import org.restlet.*;
+import org.restlet.engine.application.CorsFilter;
+import org.restlet.routing.Router;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
+import java.util.logging.*;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class BaseApplication extends Application {
@@ -29,6 +26,11 @@ public abstract class BaseApplication extends Application {
     }
 
     @Override
+    public ApplicationStatusService getStatusService() {
+        return (ApplicationStatusService) super.getStatusService();
+    }
+
+    @Override
     public synchronized void start() throws Exception {
         LOGGER.info("Démarrage de l'application");
         super.start();
@@ -41,12 +43,13 @@ public abstract class BaseApplication extends Application {
 
     @Override
     public Restlet createInboundRoot() {
-        final FiltreCors filtre = new FiltreCors(getContext());
-        filtre.setNext(routes());
-        return filtre;
+        CorsFilter filter = new CorsFilter(getContext(), routes());
+        filter.setAllowedCredentials(true);
+        filter.setAllowingAllRequestedHeaders(true);
+        return filter;
     }
 
-    protected abstract GuiceRouter routes();
+    protected abstract Router routes();
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseApplication.class);
 }

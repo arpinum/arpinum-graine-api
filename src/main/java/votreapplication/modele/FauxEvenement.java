@@ -1,6 +1,6 @@
 package votreapplication.modele;
 
-import fr.arpinum.graine.modele.evenement.Evenement;
+import fr.arpinum.graine.modele.evenement.Event;
 
-public class FauxEvenement implements Evenement {
+public class FauxEvenement implements Event {
 }

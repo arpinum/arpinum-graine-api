@@ -1,9 +1,9 @@
 package votreapplication.web.ressource;
 
+import fr.arpinum.graine.web.restlet.BaseResource;
 import org.restlet.resource.Get;
-import org.restlet.resource.ServerResource;
 
-public class IndexRessource extends ServerResource {
+public class IndexRessource extends BaseResource {
 
     @Get
     public String représente() {

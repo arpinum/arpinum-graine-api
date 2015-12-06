@@ -1,6 +1,6 @@
 package votreapplication.commande;
 
-import fr.arpinum.graine.commande.Commande;
+import fr.arpinum.graine.commande.Command;
 
-public class PremiereCommande implements Commande<String> {
+public class PremiereCommande implements Command<String> {
 }

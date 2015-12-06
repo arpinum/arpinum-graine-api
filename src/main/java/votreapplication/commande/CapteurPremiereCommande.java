@@ -1,9 +1,9 @@
 package votreapplication.commande;
 
-import fr.arpinum.graine.commande.CapteurCommande;
+import fr.arpinum.graine.commande.CommandHandler;
 
 @SuppressWarnings("UnusedDeclaration")
-public class CapteurPremiereCommande implements CapteurCommande<PremiereCommande, String> {
+public class CapteurPremiereCommande implements CommandHandler<PremiereCommande, String> {
 
     @Override
     public String execute(PremiereCommande premiereCommande) {

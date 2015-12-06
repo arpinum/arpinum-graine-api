@@ -14,12 +14,16 @@ public abstract class GuiceRouter extends Router {
         route();
     }
 
+    protected abstract void route();
+
+    public GuiceRouter(Context context) {
+        super(context);
+    }
+
     @Override
     public Finder createFinder(Class<? extends ServerResource> resourceClass) {
         return new GuiceFinder(getContext(), resourceClass, injector);
     }
-
-    protected abstract void route();
 
     protected Injector injector;
 }

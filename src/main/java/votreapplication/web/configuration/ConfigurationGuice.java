@@ -2,17 +2,25 @@ package votreapplication.web.configuration;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import fr.arpinum.graine.commande.*;
+import fr.arpinum.graine.commande.CommandBus;
+import fr.arpinum.graine.commande.CommandHandler;
+import fr.arpinum.graine.commande.CommandValidator;
+import fr.arpinum.graine.commande.SynchronisationCommande;
 import fr.arpinum.graine.infrastructure.bus.guice.BusMagique;
-import fr.arpinum.graine.infrastructure.persistance.mongo.ContexteMongoLink;
-import fr.arpinum.graine.modele.evenement.*;
-import fr.arpinum.graine.recherche.BusRecherche;
-import fr.arpinum.graine.recherche.CapteurRecherche;
+import fr.arpinum.graine.infrastructure.persistance.mongo.MongoLinkContext;
+import fr.arpinum.graine.modele.evenement.AsyncEventBus;
+import fr.arpinum.graine.modele.evenement.EventBus;
+import fr.arpinum.graine.modele.evenement.EventCaptor;
+import fr.arpinum.graine.modele.evenement.SynchronisationEvenement;
+import fr.arpinum.graine.recherche.ResearchBus;
+import fr.arpinum.graine.recherche.ResearchHandler;
 import org.jongo.Jongo;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
@@ -28,7 +36,9 @@ import javax.validation.Validator;
 import java.io.IOException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
 
 public class ConfigurationGuice extends AbstractModule {
     @Override
@@ -38,6 +48,8 @@ public class ConfigurationGuice extends AbstractModule {
         configureEvements();
         configureCommandes();
         configureRecherches();
+        requestStaticInjection(LocalisateurEntrepots.class);
+
     }
 
     private Properties propriétés() {
@@ -54,36 +66,36 @@ public class ConfigurationGuice extends AbstractModule {
     }
 
     private void configurePersistance() {
-        bind(ContexteMongoLink.class).in(Singleton.class);
+        bind(MongoLinkContext.class).in(Singleton.class);
 
         bind(LocalisateurEntrepots.class).to(LocalisateurEntrepotsMongoLink.class).in(Singleton.class);
     }
 
     private void configureRecherches() {
-        BusMagique.scanPackageEtBind("votreapplication.recherche", CapteurRecherche.class, binder());
-        bind(BusRecherche.class).asEagerSingleton();
+        BusMagique.scanPackageEtBind("votreapplication.recherche", ResearchHandler.class, binder());
+        bind(ResearchBus.class).asEagerSingleton();
     }
 
     private void configureCommandes() {
         final Multibinder<SynchronisationCommande> multibinder = Multibinder.newSetBinder(binder(), SynchronisationCommande.class);
-        multibinder.addBinding().to(ContexteMongoLink.class);
-        multibinder.addBinding().to(ValidateurCommande.class);
-        multibinder.addBinding().to(BusEvenementAsynchrone.class);
-        BusMagique.scanPackageEtBind("votreapplication.commande", CapteurCommande.class, binder());
-        bind(BusCommande.class).asEagerSingleton();
+        multibinder.addBinding().to(MongoLinkContext.class);
+        multibinder.addBinding().to(CommandValidator.class);
+        multibinder.addBinding().to(AsyncEventBus.class);
+        BusMagique.scanPackageEtBind("votreapplication.commande", CommandHandler.class, binder());
+        bind(CommandBus.class).asEagerSingleton();
     }
 
     private void configureEvements() {
         final Multibinder<SynchronisationEvenement> multibinder = Multibinder.newSetBinder(binder(), SynchronisationEvenement.class);
-        multibinder.addBinding().to(ContexteMongoLink.class);
-        BusMagique.scanPackageEtBind("votreapplication", CapteurEvenement.class, binder());
-        bind(BusEvenement.class).to(BusEvenementAsynchrone.class).asEagerSingleton();
+        multibinder.addBinding().to(MongoLinkContext.class);
+        BusMagique.scanPackageEtBind("votreapplication", EventCaptor.class, binder());
+        bind(EventBus.class).to(AsyncEventBus.class).asEagerSingleton();
     }
 
     @Provides
     @Singleton
-    BusEvenementAsynchrone busEvenementAsynchrone(Set<SynchronisationEvenement> synchronisationEvenements, Set<CapteurEvenement> evenements) {
-        return new BusEvenementAsynchrone(synchronisationEvenements, evenements);
+    AsyncEventBus busEvenementAsynchrone(Set<SynchronisationEvenement> synchronisationEvenements, Set<EventCaptor> evenements) {
+        return new AsyncEventBus(synchronisationEvenements, evenements);
     }
 
     @Provides

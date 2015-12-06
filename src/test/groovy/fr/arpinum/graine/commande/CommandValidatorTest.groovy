@@ -6,10 +6,10 @@ import spock.lang.Specification
 
 import javax.validation.Validation
 
-class ValidateurCommandeTest extends Specification {
+class CommandValidatorTest extends Specification {
 
     def factory = Validation.buildDefaultValidatorFactory()
-    def validateur = new ValidateurCommande(factory.validator)
+    def validateur = new CommandValidator(factory.validator)
 
     def "peut valider une commande"() {
         when:
@@ -31,7 +31,7 @@ class ValidateurCommandeTest extends Specification {
 
     def "appelle la validation en début de synchronisation avec le bus"() {
         when:
-        validateur.avantExecution new FauxMessage("")
+        validateur.beforeExecution new FauxMessage("")
 
         then:
         thrown(ValidationException)

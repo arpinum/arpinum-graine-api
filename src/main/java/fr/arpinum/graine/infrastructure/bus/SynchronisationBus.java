@@ -3,19 +3,19 @@ package fr.arpinum.graine.infrastructure.bus;
 
 public interface SynchronisationBus {
 
-    default void avantExecution(Message<?> message) {
+    default void beforeExecution(Message<?> message) {
 
     }
 
-    default void surErreur() {
+    default void onError() {
 
     }
 
-    default void apresExecution() {
+    default void afterExecution() {
 
     }
 
-    default void finalement() {
+    default void atLast() {
 
     }
 }

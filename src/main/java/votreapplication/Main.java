@@ -1,6 +1,6 @@
 package votreapplication;
 
-import fr.arpinum.graine.web.restlet.Serveur;
+import fr.arpinum.graine.web.restlet.Server;
 import org.restlet.Context;
 import votreapplication.web.VotreApplication;
 
@@ -10,7 +10,7 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
-        new Serveur(new VotreApplication(new Context())).start(port());
+        new Server(new VotreApplication(new Context())).start(port());
     }
 
     private static int port() {

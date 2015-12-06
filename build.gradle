@@ -8,10 +8,16 @@ repositories {
 
 compileJava.options.encoding = 'UTF-8'
 
+allprojects {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
 ext {
-    restletVersion = "2.2.3"
-    mongoLinkVersion = "1.1.6"
-    guiceVersion = "4.0-beta4"
+    restletVersion = "2.3.4"
+    mongoLinkVersion = "1.2.2"
+    guiceVersion = "4.0"
+    reactorVersion = "2.0.1.RELEASE"
 }
 test {
     testLogging {
@@ -23,7 +29,7 @@ dependencies {
     compile 'com.google.guava:guava:16.0.1'
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     compile "com.google.inject:guice:$guiceVersion"
-    compile('org.reflections:reflections:0.9.9-RC1') {
+    compile('org.reflections:reflections:0.9.9') {
         exclude group: 'org.javassist'
     }
     compile 'org.javassist:javassist:3.18.1-GA'
@@ -40,11 +46,14 @@ dependencies {
     compile 'org.glassfish.web:javax.el:2.2.4'
 
     compile "org.mongolink:mongolink:$mongoLinkVersion"
-    compile 'org.jongo:jongo:1.0'
+    compile 'org.jongo:jongo:1.1'
 
     compile 'org.slf4j:jul-to-slf4j:1.7.2'
     compile 'ch.qos.logback:logback-classic:1.0.13'
+    compile "com.auth0:java-jwt:2.0.1"
 
+    compile "io.projectreactor:reactor-core:$reactorVersion"
+    compile "io.projectreactor:reactor-bus:$reactorVersion"
 
     testCompile('junit:junit:4.11') {
         transitive = false
@@ -64,6 +73,10 @@ dependencies {
 task deps(type: Sync) {
     from configurations.compile
     into "$buildDir/deps"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.8'
 }
 
 task stage(dependsOn: ['clean', 'deps', 'jar'])

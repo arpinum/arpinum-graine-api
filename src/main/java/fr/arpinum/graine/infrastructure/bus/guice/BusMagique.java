@@ -13,19 +13,19 @@ import java.util.Set;
 @SuppressWarnings("UnusedDeclaration")
 public final class BusMagique {
 
-    private BusMagique() {
-    }
-
     public static <T> void scanPackageEtBind(String nomPackage, Class<T> type, Binder binder) {
         Reflections reflections = new Reflections(ClasspathHelper.forPackage("fr.arpinum.graine"), ClasspathHelper.forPackage(nomPackage));
         Set<Class<? extends T>> recherches = reflections.getSubTypesOf(type);
         Multibinder<T> rechercheMultibinder = Multibinder.newSetBinder(binder, type);
         recherches.forEach((typeTrouvé) -> {
-            if (!Modifier.isAbstract(typeTrouvé.getModifiers())) {
+            if (!Modifier.isAbstract(typeTrouvé.getModifiers()) && typeTrouvé.getCanonicalName().startsWith(nomPackage)) {
                 LOGGER.debug("Implémentation trouvée pour {} : {}", type, typeTrouvé);
                 rechercheMultibinder.addBinding().to(typeTrouvé);
             }
         });
+    }
+
+    private BusMagique() {
     }
 
     private static Logger LOGGER = LoggerFactory.getLogger(BusMagique.class);
