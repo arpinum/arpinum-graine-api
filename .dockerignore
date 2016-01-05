@@ -1,0 +1,5 @@
+.git
+build
+scripts
+.idea
+*.iml
