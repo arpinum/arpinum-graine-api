@@ -1,82 +1,70 @@
-apply plugin: 'java'
-apply plugin: 'groovy'
-
-repositories {
-    mavenCentral()
-    maven { url 'http://maven.restlet.org' }
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
 }
 
-compileJava.options.encoding = 'UTF-8'
+plugins {
+    id 'groovy'
+    id "io.ratpack.ratpack-java" version "1.4.4"
+    id "com.github.johnrengelman.shadow" version "1.2.4"
+}
 
-allprojects {
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+repositories {
+    jcenter()
 }
 
 ext {
-    restletVersion = "2.3.4"
-    mongoLinkVersion = "1.2.2"
-    guiceVersion = "4.0"
-    reactorVersion = "2.0.1.RELEASE"
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    ratpackVersion = '1.4.4'
+    guiceVersion = '4.0'
 }
-test {
-    testLogging {
-        exceptionFormat = 'full'
-    }
-}
+
 
 dependencies {
-    compile 'com.google.guava:guava:16.0.1'
+    compile 'com.google.guava:guava:20.0'
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     compile "com.google.inject:guice:$guiceVersion"
-    compile('org.reflections:reflections:0.9.9') {
+    compile('org.reflections:reflections:0.9.10') {
         exclude group: 'org.javassist'
     }
-    compile 'org.javassist:javassist:3.18.1-GA'
-
-
-    compile "org.restlet.jse:org.restlet:$restletVersion"
-    compile "org.restlet.jse:org.restlet.ext.json:$restletVersion"
-    compile "org.restlet.jse:org.restlet.ext.jackson:${restletVersion}"
-    compile "org.restlet.jse:org.restlet.ext.jetty:$restletVersion"
-    compile "org.restlet.jse:org.restlet.ext.jsslutils:$restletVersion"
-
-    compile 'org.hibernate:hibernate-validator:5.0.3.Final'
+    compile 'org.hibernate:hibernate-validator:5.2.2.Final'
     compile 'javax.el:javax.el-api:2.2.4'
     compile 'org.glassfish.web:javax.el:2.2.4'
 
-    compile "org.mongolink:mongolink:$mongoLinkVersion"
-    compile 'org.jongo:jongo:1.1'
+    compile 'ch.qos.logback:logback-classic:1.1.6'
 
-    compile 'org.slf4j:jul-to-slf4j:1.7.2'
-    compile 'ch.qos.logback:logback-classic:1.0.13'
-    compile "com.auth0:java-jwt:2.0.1"
+    compile 'org.jongo:jongo:1.3.0'
+    compile 'org.mongodb:mongodb-driver:3.4.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.1'
 
-    compile "io.projectreactor:reactor-core:$reactorVersion"
-    compile "io.projectreactor:reactor-bus:$reactorVersion"
+    compile "com.auth0:java-jwt:2.1.0"
+    compile 'io.reactivex.rxjava2:rxjava:2.0.4'
 
-    testCompile('junit:junit:4.11') {
+    compile ratpack.dependency('guice')
+
+    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-3'
+    testCompile 'com.github.fakemongo:fongo:2.0.7'
+    testCompile('junit:junit:4.12') {
         transitive = false
     }
     testCompile 'org.mockito:mockito-all:1.9.5'
-    testCompile 'org.assertj:assertj-core:1.6.0'
-    testCompile 'com.googlecode.catch-exception:catch-throwable:1.2.0'
-    testCompile 'com.googlecode.catch-exception:catch-exception:1.2.0'
-    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
-    testCompile "org.mongolink:mongolink-testtools:$mongoLinkVersion"
-    testCompile 'com.github.fakemongo:fongo:1.4.1'
-    testCompile 'com.gmongo:gmongo:1.3'
-
+    testCompile 'org.assertj:assertj-core:3.2.0'
+    testCompile('com.gmongo:gmongo:1.5') {
+        exclude group: 'org.mongodb'
+    }
 }
 
 
-task deps(type: Sync) {
-    from configurations.compile
-    into "$buildDir/deps"
+
+shadowJar {
+    baseName = 'app'
+    classifier = null
+    version = null
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.8'
-}
-
-task stage(dependsOn: ['clean', 'deps', 'jar'])
+mainClassName = 'Main'

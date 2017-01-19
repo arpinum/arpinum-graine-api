@@ -1,14 +1,13 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>VotreApplication:api>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%cyan(%thread)][%highlight(%-5level)][%boldGreen(%logger{5})] %m%n</pattern>
         </encoder>
     </appender>
 
-    <root level="warn">
-        <appender-ref ref="STDOUT"/>
+    <logger name="io.netty" level="INFO"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
     </root>
-    <logger name="fr.arpinum" additivity="false" level="DEBUG">
-    <appender-ref ref="STDOUT"/>
-    </logger>
 </configuration>
