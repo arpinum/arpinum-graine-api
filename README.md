@@ -2,8 +2,19 @@
 
 ## Le but 
 
-Ce projet est la base de travail pour le serveur de certaines applications Arpinum. 
+Ce projet est la base de travail pour le serveur de certaines applications Arpinum.
+ 
+La philosophie principale est d'utiliser des bibliothèques qui font le job plutôt que de se faire utiliser par un framework
+
+## WARNING
+
+Nous ne prétendons pas que cette graîne est parfaite, encore moins capable de gérer le cas ou la charge spécifique que vous avez en tête. 
+Nous la codons et faisons évoluer selon nos besoins, et pour le moment, elle ne nous a pas trahis en production.
+
+## Concepts
+
 Les postulats sont les suivants : 
+
 
 * Nous voulons coder le métier en ignorance de toute notion technique
 * L'ignorance de la persistance est obtenue via le pattern Repository
