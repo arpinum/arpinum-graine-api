@@ -23,11 +23,11 @@ public class CommandValidator implements CommandMiddleware {
 
     @Override
     public Tuple2<?, Seq<Event<?>>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event<?>>>> next) {
-        valide(message);
+        validate(message);
         return next.get();
     }
 
-    public void valide(Command<?> command) {
+    public void validate(Command<?> command) {
         Set<ConstraintViolation<Message<?>>> violations = validator.validate(command);
         if (!violations.isEmpty()) {
             throw new ValidationException(enMessages(violations));

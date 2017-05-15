@@ -5,23 +5,24 @@ import arpinum.infrastructure.bus.Message
 import spock.lang.Specification
 
 import javax.validation.Validation
+import java.util.function.Supplier
 
 class CommandValidatorTest extends Specification {
 
     def factory = Validation.buildDefaultValidatorFactory()
-    def validateur = new CommandValidator(factory.validator)
+    def validator = new CommandValidator(factory.validator)
 
-    def "peut valider une commande"() {
+    def "can validate a command"() {
         when:
-        validateur.valide new FauxMessage("")
+        validator.validate(new FakeCommand(""))
 
         then:
         thrown(ValidationException)
     }
 
-    def "peut donner la cause de l'erreur"() {
+    def "gives error cause"() {
         when:
-        validateur.valide new FauxMessage("")
+        validator.validate(new FakeCommand(""))
 
         then:
         ValidationException exception = thrown()
@@ -30,19 +31,23 @@ class CommandValidatorTest extends Specification {
     }
 
     def "appelle la validation en début de synchronisation avec le bus"() {
+        given:
+        def next = Mock(Supplier)
+
         when:
-        validateur.beforeExecution new FauxMessage("")
+        validator.intercept(new FakeCommand(""), next)
 
         then:
         thrown(ValidationException)
+        0 * next.get()
     }
 
-    private static class FauxMessage implements Message<String> {
+    private static class FakeCommand implements Command<String> {
         @NotEmpty
-        String nom
+        String name
 
-        FauxMessage(String nom) {
-            this.nom = nom
+        FakeCommand(String name) {
+            this.name = name
         }
     }
 }

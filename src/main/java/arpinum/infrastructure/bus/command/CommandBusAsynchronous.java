@@ -46,7 +46,6 @@ public class CommandBusAsynchronous implements CommandBus {
     private final Chain middlewareChain;
     private final ExecutorService executor;
     private final static Logger LOGGER = LoggerFactory.getLogger(CommandBusAsynchronous.class);
-    private static final Object EMPTY = new Object();
 
     private static class Chain {
 
