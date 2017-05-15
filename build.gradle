@@ -5,13 +5,16 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
     }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
+    }
 }
 
-plugins {
-    id 'groovy'
-    id "io.ratpack.ratpack-java" version "1.4.4"
-    id "com.github.johnrengelman.shadow" version "1.2.4"
-}
+apply plugin: 'groovy'
+apply plugin: 'com.github.johnrengelman.plugin-shadow'
+apply plugin: 'application'
+
+
 
 repositories {
     jcenter()
@@ -20,21 +23,19 @@ repositories {
 ext {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
-    ratpackVersion = '1.4.4'
     guiceVersion = '4.0'
 }
 
 
 dependencies {
-    compile 'com.google.guava:guava:20.0'
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     compile "com.google.inject:guice:$guiceVersion"
-    compile('org.reflections:reflections:0.9.10') {
-        exclude group: 'org.javassist'
-    }
+    compile 'io.github.lukehutch:fast-classpath-scanner:2.0.17'
     compile 'org.hibernate:hibernate-validator:5.2.2.Final'
     compile 'javax.el:javax.el-api:2.2.4'
     compile 'org.glassfish.web:javax.el:2.2.4'
+    compile 'io.vavr:vavr:0.9.0'
+    compile 'com.spotify:apollo-http-service:1.4.0'
 
     compile 'ch.qos.logback:logback-classic:1.1.6'
 
@@ -43,9 +44,7 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.1'
 
     compile "com.auth0:java-jwt:2.1.0"
-    compile 'io.reactivex.rxjava2:rxjava:2.0.4'
 
-    compile ratpack.dependency('guice')
 
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-3'
     testCompile 'com.github.fakemongo:fongo:2.0.7'

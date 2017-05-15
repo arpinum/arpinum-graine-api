@@ -1,12 +1,13 @@
 package arpinum.boundedcontext;
 
-import com.google.inject.*;
-import org.jongo.*;
-import org.reflections.*;
-import org.reflections.util.*;
-import org.slf4j.*;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Injector;
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import org.jongo.Jongo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Comparator;
 
 public class Patcher {
 
@@ -16,14 +17,17 @@ public class Patcher {
     }
 
     public void run(String packageToScan) {
-        Reflections reflections = new Reflections(ClasspathHelper.forPackage(packageToScan));
-        final Set<Class<?>> patches = reflections.getTypesAnnotatedWith(PatchNumber.class);
+        ImmutableSet.Builder<Class<?>> builder = ImmutableSet.builder();
+        new FastClasspathScanner(packageToScan)
+                .matchClassesWithAnnotation(Patch.class, builder::add)
+                .scan();
+        ImmutableSet<Class<?>> patches = builder.build();
         patches.stream()
                 .filter(c -> c.getPackage().getName().startsWith(packageToScan))
                 .map(c -> {
                     final PatchNumber annotation = c.getAnnotation(PatchNumber.class);
                     return new PatchDescription(annotation.value(), (Class<? extends Patch>) c);
-                }).sorted((o1, o2) -> Integer.compare(o1.number, o2.number))
+                }).sorted(Comparator.comparingInt(o -> o.number))
                 .forEach(this::runIfNeeded);
     }
 

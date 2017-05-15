@@ -19,14 +19,12 @@ public class EventSourcedRepositoryTest {
     private EventStore eventStore;
     private EventBus bus;
     private EventSourcedRepository<UUID, EventSourcedAggregate> repository;
-    private UnitOfWork unitOfWork;
 
     @Before
     public void setUp() throws Exception {
         eventStore = new EventStoreMemory();
         bus = mock(EventBus.class);
-        unitOfWork = new UnitOfWork(eventStore, bus);
-        repository = new AggregateRepository(unitOfWork, eventStore);
+        repository = new AggregateRepository(eventStore);
     }
 
     @Test
@@ -61,23 +59,11 @@ public class EventSourcedRepositoryTest {
         repository.add(aggregate);
 
         repository.delete(aggregate);
-        unitOfWork.afterExecution();
 
         assertThat(eventStore.count(targetId, EventSourcedAggregate.class)).isEqualTo(0);
     }
 
-    @Test
-    public void adding_adds_to_unit_of_work() throws Exception {
-        UUID targetId = UUID.randomUUID();
-        EventSourcedAggregate aggregate = new EventSourcedAggregate(targetId);
-        CreatedEvent event = new CreatedEvent(targetId);
-        aggregate.genEvent(event);
 
-        repository.add(aggregate);
-
-        EventSourcedAggregate instance = unitOfWork.get(targetId, EventSourcedAggregate.class, () -> null);
-        assertThat(instance).isEqualTo(aggregate);
-    }
 
     public static class EventSourcedAggregate extends BaseAggregateWithUuid {
 
@@ -94,7 +80,7 @@ public class EventSourcedRepositoryTest {
         }
 
         public void genEvent(Event event) {
-            pushEvent(event);
+
         }
     }
 
@@ -108,8 +94,8 @@ public class EventSourcedRepositoryTest {
 
     public static class AggregateRepository extends EventSourcedRepository<UUID, EventSourcedAggregate> {
 
-        public AggregateRepository(UnitOfWork unitOfWork, EventStore eventStore) {
-            super(unitOfWork, eventStore);
+        public AggregateRepository( EventStore eventStore) {
+            super(eventStore);
         }
     }
 }

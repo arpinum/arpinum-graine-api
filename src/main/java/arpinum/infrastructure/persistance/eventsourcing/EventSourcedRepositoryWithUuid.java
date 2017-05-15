@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class EventSourcedRepositoryWithUuid<TRoot extends BaseAggregate<UUID>> extends EventSourcedRepository<UUID, TRoot> {
 
-    public EventSourcedRepositoryWithUuid(UnitOfWork unitOfWork, EventStore eventStore) {
-        super(unitOfWork, eventStore);
+    public EventSourcedRepositoryWithUuid(EventStore eventStore) {
+        super(eventStore);
     }
 }

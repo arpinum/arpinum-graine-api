@@ -15,7 +15,6 @@ public class Wallet extends BaseAggregateWithUuid {
     public static class Factory {
         public Wallet create(String name) {
             Wallet wallet = new Wallet();
-            wallet.pushEvent(new WalletCreated(wallet.getId(), name));
             return wallet;
         }
     }

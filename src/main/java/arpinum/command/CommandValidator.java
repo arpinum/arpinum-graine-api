@@ -1,16 +1,20 @@
 package arpinum.command;
 
 
+import arpinum.ddd.evenement.Event;
 import arpinum.infrastructure.bus.Message;
+import io.vavr.Tuple2;
+import io.vavr.collection.Seq;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class CommandValidator implements SynchronisationCommande {
+public class CommandValidator implements CommandMiddleware {
 
     @Inject
     public CommandValidator(Validator validator) {
@@ -18,12 +22,13 @@ public class CommandValidator implements SynchronisationCommande {
     }
 
     @Override
-    public void beforeExecution(Message<?> commande) {
-        valide(commande);
+    public Tuple2<?, Seq<Event<?>>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event<?>>>> next) {
+        valide(message);
+        return next.get();
     }
 
-    public void valide(Message<?> commande) {
-        Set<ConstraintViolation<Message<?>>> violations = validator.validate(commande);
+    public void valide(Command<?> command) {
+        Set<ConstraintViolation<Message<?>>> violations = validator.validate(command);
         if (!violations.isEmpty()) {
             throw new ValidationException(enMessages(violations));
         }

@@ -1,10 +1,9 @@
 package arpinum.command;
 
-import arpinum.infrastructure.bus.Message;
-import io.reactivex.Single;
+import io.vavr.concurrent.Future;
 
 public interface CommandBus {
 
-    <TReponse> Single<TReponse> send(Message<TReponse> message);
+    <TReponse> Future<TReponse> send(Command<TReponse> message);
 
 }

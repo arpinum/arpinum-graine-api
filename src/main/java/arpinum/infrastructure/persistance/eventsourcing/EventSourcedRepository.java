@@ -17,8 +17,7 @@ import java.util.stream.Stream;
 
 public class EventSourcedRepository<TId, TRoot extends BaseAggregate<TId>> implements Repository<TId, TRoot> {
 
-    public EventSourcedRepository(UnitOfWork unitOfWork, EventStore eventStore) {
-        this.unitOfWork = unitOfWork;
+    public EventSourcedRepository(EventStore eventStore) {
         this.eventStore = eventStore;
         for (Method method : typeToken.getRawType().getMethods()) {
             if (method.getAnnotationsByType(EventSourceHandler.class).length > 0) {
@@ -32,11 +31,11 @@ public class EventSourcedRepository<TId, TRoot extends BaseAggregate<TId>> imple
 
     @Override
     public TRoot get(TId tId) {
-        return unitOfWork.get(tId, type(), () -> this.load(tId));
+        return load(tId);
     }
 
     private TRoot load(TId tId) {
-        Class<TRoot> type = (Class<TRoot>) typeToken.getRawType();
+        Class<TRoot> type = type();
         if (eventStore.count(tId, type) == 0) {
             throw new IllegalArgumentException(String.format("Aggregate not found %s with id %s", typeToken, tId));
         }
@@ -77,15 +76,14 @@ public class EventSourcedRepository<TId, TRoot extends BaseAggregate<TId>> imple
 
     @Override
     public void add(TRoot tRoot) {
-        unitOfWork.add(tRoot);
+
     }
 
     @Override
     public void delete(TRoot tRoot) {
-        unitOfWork.delete(tRoot);
+
     }
 
-    private UnitOfWork unitOfWork;
     protected EventStore eventStore;
     private Map<Class<?>, Method> handlers = Maps.newConcurrentMap();
     private final TypeToken<TRoot> typeToken = new TypeToken<TRoot>(getClass()) {

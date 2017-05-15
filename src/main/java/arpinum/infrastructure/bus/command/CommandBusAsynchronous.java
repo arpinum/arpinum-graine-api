@@ -1,25 +1,79 @@
 package arpinum.infrastructure.bus.command;
 
-import arpinum.command.*;
-import arpinum.infrastructure.bus.*;
-import io.reactivex.Single;
+import arpinum.command.Command;
+import arpinum.command.CommandBus;
+import arpinum.command.CommandHandler;
+import arpinum.command.CommandMiddleware;
+import arpinum.ddd.evenement.Event;
+import io.vavr.Tuple2;
+import io.vavr.collection.Seq;
+import io.vavr.concurrent.Future;
+import io.vavr.control.Try;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 
 @SuppressWarnings("UnusedDeclaration")
-public class CommandBusAsynchronous extends AsynchronousBus implements CommandBus {
+public class CommandBusAsynchronous implements CommandBus {
 
     @Inject
-    public CommandBusAsynchronous(Set<SynchronisationCommande> synchronisations, Set<CommandHandler> handlers) {
-        super(synchronisations, handlers);
+    public CommandBusAsynchronous(Seq<CommandMiddleware> middlewares, Seq<CommandHandler> handlers, ExecutorService executor) {
+        this.executor = executor;
+        this.handlers = handlers;
+        middlewareChain = middlewares.foldRight(new HandlerInvokation(), Chain::new);
     }
 
     @Override
-    public <TReponse> Single<TReponse> send(Message<TReponse> message) {
-        return super.dispatch(message)
-                .firstOrError();
+    public <TReponse> Future<TReponse> send(Command<TReponse> message) {
+        return handlers.find(h -> h.commandType().equals(message.getClass()))
+                .map(h -> (CommandHandler<Command<TReponse>, TReponse>) h)
+                .map(h -> execute(h, message))
+                .getOrElse(() -> Future.failed(new IllegalArgumentException(String.format("Can't find handler for %s", message.getClass()))));
+    }
+
+    private <TReponse> Future<TReponse> execute(CommandHandler<Command<TReponse>, TReponse> handler, Command<TReponse> command) {
+        return Future.fromTry(executor, Try.ofSupplier(() -> middlewareChain
+                .apply(handler, command)
+                .apply((r, e) -> r)));
+    }
+
+
+    private final Seq<CommandHandler> handlers;
+
+    private final Chain middlewareChain;
+    private final ExecutorService executor;
+    private final static Logger LOGGER = LoggerFactory.getLogger(CommandBusAsynchronous.class);
+    private static final Object EMPTY = new Object();
+
+    private static class Chain {
+
+        Chain(CommandMiddleware current, Chain next) {
+            this.current = current;
+            this.next = next;
+        }
+
+        public <T> Tuple2<T, Seq<Event<?>>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
+            LOGGER.debug("Running middleware {}", current.getClass());
+            return (Tuple2<T, Seq<Event<?>>>) current.intercept(command, () -> next.apply(h, command));
+        }
+
+        private CommandMiddleware current;
+        private Chain next;
+    }
+
+    private static class HandlerInvokation extends Chain {
+        public HandlerInvokation() {
+            super(null, null);
+        }
+
+        @Override
+        public <T> Tuple2<T, Seq<Event<?>>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
+            LOGGER.debug("Applying handler {}", h.getClass());
+            return h.execute(command);
+        }
     }
 }
 

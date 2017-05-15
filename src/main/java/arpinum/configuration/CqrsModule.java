@@ -1,12 +1,11 @@
 package arpinum.configuration;
 
-import arpinum.infrastructure.persistance.eventsourcing.UnitOfWork;
 import com.google.inject.*;
 import com.google.inject.multibindings.Multibinder;
 import arpinum.command.CommandBus;
 import arpinum.command.CommandHandler;
 import arpinum.command.CommandValidator;
-import arpinum.command.SynchronisationCommande;
+import arpinum.command.CommandMiddleware;
 import arpinum.infrastructure.bus.command.CommandBusAsynchronous;
 import arpinum.infrastructure.bus.event.CommandSynchronizedEventBus;
 import arpinum.infrastructure.bus.guice.BusMagique;
@@ -30,9 +29,8 @@ public class CqrsModule extends AbstractModule {
     }
 
     private void configureCommands() {
-        final Multibinder<SynchronisationCommande> multibinder = Multibinder.newSetBinder(binder(), SynchronisationCommande.class);
+        final Multibinder<CommandMiddleware> multibinder = Multibinder.newSetBinder(binder(), CommandMiddleware.class);
         multibinder.addBinding().to(CommandValidator.class);
-        multibinder.addBinding().to(UnitOfWork.class);
         multibinder.addBinding().to(CommandSynchronizedEventBus.class);
         BusMagique.scanPackageAndBind(commandPackage, CommandHandler.class, binder());
         bind(CommandBus.class).to(CommandBusAsynchronous.class).asEagerSingleton();

@@ -10,7 +10,7 @@ public class WithRepositories extends ExternalResource {
     @Override
     protected void before() throws Throwable {
         eventStore = new EventStoreMemory();
-        Repositories.initialize(new RepositoriesEventSourced(eventStore, new DirectUnitOfWork(eventStore)));
+        Repositories.initialize(new RepositoriesEventSourced(eventStore));
     }
 
     @Override

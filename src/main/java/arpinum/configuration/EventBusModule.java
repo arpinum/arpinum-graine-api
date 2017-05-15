@@ -5,7 +5,7 @@ import com.google.inject.*;
 import com.google.inject.multibindings.Multibinder;
 import arpinum.ddd.evenement.EventBus;
 import arpinum.ddd.evenement.EventCaptor;
-import arpinum.ddd.evenement.SynchronisationEvenement;
+import arpinum.ddd.evenement.EventBusMiddleware;
 import arpinum.infrastructure.bus.event.CommandSynchronizedEventBus;
 import arpinum.infrastructure.bus.guice.BusMagique;
 
@@ -23,14 +23,14 @@ public class EventBusModule extends AbstractModule {
 
     }
     private void configureEventBus() {
-        final Multibinder<SynchronisationEvenement> multibinder = Multibinder.newSetBinder(binder(), SynchronisationEvenement.class);
+        final Multibinder<EventBusMiddleware> multibinder = Multibinder.newSetBinder(binder(), EventBusMiddleware.class);
         BusMagique.scanPackageAndBind(packageName, EventCaptor.class, binder());
         bind(EventBus.class).to(CommandSynchronizedEventBus.class).asEagerSingleton();
     }
 
     @Provides
     @Singleton
-    public CommandSynchronizedEventBus asyncEventBus(Set<SynchronisationEvenement> synchronisationEvenements, Set<EventCaptor> evenements) {
+    public CommandSynchronizedEventBus asyncEventBus(Set<EventBusMiddleware> synchronisationEvenements, Set<EventCaptor> evenements) {
         return new AsyncEventBus(synchronisationEvenements, evenements);
     }
 

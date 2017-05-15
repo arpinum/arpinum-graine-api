@@ -2,18 +2,17 @@ package yourapp.web;
 
 
 import arpinum.command.CommandBus;
-import io.reactivex.Single;
-import ratpack.exec.Promise;
-import ratpack.handling.Context;
-import ratpack.handling.Handler;
+import com.spotify.apollo.route.AsyncHandler;
+import com.spotify.apollo.route.Route;
+import com.spotify.apollo.route.RouteProvider;
+import io.vavr.concurrent.Future;
 import yourapp.command.CreateWalletCommand;
 
 import javax.inject.Inject;
 import java.util.UUID;
+import java.util.stream.Stream;
 
-public class HomeResource implements Handler {
-
-    private CommandBus bus;
+public class HomeResource implements RouteProvider {
 
     @Inject
     public HomeResource(CommandBus bus) {
@@ -21,11 +20,15 @@ public class HomeResource implements Handler {
     }
 
     @Override
-    public void handle(Context ctx) throws Exception {
-        Promise.<UUID>async((p) -> {
-            Single<UUID> result = bus.send(new CreateWalletCommand("test"));
-            result.subscribe(p::success, p::error);
-        }).then(n -> ctx.render(n.toString()));
-
+    public Stream<? extends Route<? extends AsyncHandler<?>>> routes() {
+        return Stream.of(
+                Route.async("GET", "/", ctx -> handle().toCompletableFuture())
+        );
     }
+
+    public Future<UUID> handle() {
+        return bus.send(new CreateWalletCommand("test"));
+    }
+
+    private CommandBus bus;
 }

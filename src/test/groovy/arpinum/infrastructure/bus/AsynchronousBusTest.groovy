@@ -23,7 +23,7 @@ class AsynchronousBusTest extends Specification {
 
     def "encapsulates with syncs"() {
         given:
-        def synchro = Mock(SynchronisationBus)
+        def synchro = Mock(BusMiddleware)
         def bus = busWith(synchro)
         def command = new FakeMessage()
 
@@ -43,7 +43,7 @@ class AsynchronousBusTest extends Specification {
         given:
         def handler = new FakeCommandHandler()
         handler.throwsException()
-        def synchronisationBus = Mock(SynchronisationBus)
+        def synchronisationBus = Mock(BusMiddleware)
         def bus = busWith(handler, synchronisationBus)
 
         when:
@@ -102,19 +102,19 @@ class AsynchronousBusTest extends Specification {
     }
 
 
-    private AsynchronousBus busWith(handler, SynchronisationBus synchronisationBus) {
+    private AsynchronousBus busWith(handler, BusMiddleware synchronisationBus) {
         final AsynchronousBus bus = new AsynchronousBus(Sets.newHashSet(synchronisationBus), Sets.newHashSet(handler)) {
 
         }
         return bus
     }
 
-    private AsynchronousBus busWith(SynchronisationBus synchro) {
+    private AsynchronousBus busWith(BusMiddleware synchro) {
         return busWith(anHandler(), synchro)
     }
 
     private AsynchronousBus busWith(handler) {
-        busWith(handler, mock(SynchronisationBus.class))
+        busWith(handler, mock(BusMiddleware.class))
     }
 
     private FakeCommandHandler anHandler() {

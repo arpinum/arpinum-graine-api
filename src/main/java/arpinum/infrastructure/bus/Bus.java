@@ -1,10 +1,10 @@
 package arpinum.infrastructure.bus;
 
 
-import io.reactivex.Observable;
+import io.vavr.concurrent.Future;
 
 public interface Bus {
 
-    <TReponse> Observable<TReponse> dispatch(Message<TReponse> message);
+    <TReponse> Future<TReponse> dispatch(Message<TReponse> message);
 
 }
