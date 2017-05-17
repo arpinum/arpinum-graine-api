@@ -7,12 +7,13 @@ buildscript {
     }
     dependencies {
         classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
+        classpath group: 'org.jooby', name: 'jooby-gradle-plugin', version: '1.1.1'
     }
 }
 
 apply plugin: 'groovy'
 apply plugin: 'com.github.johnrengelman.plugin-shadow'
-apply plugin: 'application'
+apply plugin: 'jooby'
 
 
 
@@ -23,7 +24,8 @@ repositories {
 ext {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
-    guiceVersion = '4.0'
+    joobyVersion = '1.1.1'
+    guiceVersion = '4.1.0'
 }
 
 
@@ -35,7 +37,11 @@ dependencies {
     compile 'javax.el:javax.el-api:2.2.4'
     compile 'org.glassfish.web:javax.el:2.2.4'
     compile 'io.vavr:vavr:0.9.0'
-    compile 'com.spotify:apollo-http-service:1.4.0'
+
+    compile "org.jooby:jooby-netty:$joobyVersion"
+    compile "org.jooby:jooby-mongodb:$joobyVersion"
+    compile "org.jooby:jooby-jongo:$joobyVersion"
+    compile "org.jooby:jooby-jackson:$joobyVersion"
 
     compile 'ch.qos.logback:logback-classic:1.1.6'
 
@@ -66,4 +72,9 @@ shadowJar {
     version = null
 }
 
-mainClassName = 'Main'
+joobyRun {
+    mainClassName = 'bin.Main'
+    logLevel = 'info'
+}
+
+
