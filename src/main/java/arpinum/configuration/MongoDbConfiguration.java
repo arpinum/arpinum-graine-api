@@ -1,18 +1,7 @@
 package arpinum.configuration;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+public interface MongoDbConfiguration {
 
+    String uri();
 
-public class MongoDbConfiguration {
-
-    public MongoClient mongoClient() {
-        return new MongoClient(getUri());
-    }
-
-    public MongoClientURI getUri() {
-        return new MongoClientURI(uri);
-    }
-
-    private String uri;
 }

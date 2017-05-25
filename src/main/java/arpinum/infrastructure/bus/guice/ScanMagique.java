@@ -7,9 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
 
 @SuppressWarnings("UnusedDeclaration")
-public final class BusMagique {
+public final class ScanMagique {
 
     public static <T> void scanPackageAndBind(String packageName, Class<T> type, Binder binder) {
         Multibinder<T> multibinder = Multibinder.newSetBinder(binder, type);
@@ -22,9 +24,21 @@ public final class BusMagique {
                 }).scan();
     }
 
-
-    private BusMagique() {
+    public static Set<Class<?>> searchForAnnotatedClass(String packageName, Class<?> annotation) {
+        Set<Class<?>> result = new HashSet<>();
+        new FastClasspathScanner(packageName)
+                .matchClassesWithAnnotation(annotation, foundType -> {
+                    if (!Modifier.isAbstract(foundType.getModifiers()) && foundType.getCanonicalName().startsWith(packageName)) {
+                        LOGGER.debug("Implementation found for {} : {}", annotation, foundType);
+                        result.add(foundType);
+                    }
+                }).scan();
+        return result;
     }
 
-    private static Logger LOGGER = LoggerFactory.getLogger(arpinum.infrastructure.bus.guice.BusMagique.class);
+
+    private ScanMagique() {
+    }
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ScanMagique.class);
 }

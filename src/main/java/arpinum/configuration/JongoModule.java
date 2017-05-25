@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import org.cfg4j.provider.ConfigurationProvider;
 import org.jongo.Jongo;
 import arpinum.infrastructure.persistance.JongoBuilder;
 import arpinum.infrastructure.persistance.JongoProvider;
@@ -20,7 +22,8 @@ public class JongoModule extends AbstractModule {
     @Provides
     @Singleton
     public Jongo jongo(MongoDbConfiguration mongoDbConfiguration, MongoClient client) throws UnknownHostException {
-        return JongoBuilder.build(client.getDB(mongoDbConfiguration.getUri().getDatabase()));
+        MongoClientURI mongoClientURI = new MongoClientURI(mongoDbConfiguration.uri());
+        return JongoBuilder.build(client.getDB(mongoClientURI.getDatabase()));
     }
 
     @Provides
@@ -28,4 +31,5 @@ public class JongoModule extends AbstractModule {
     public JongoProvider jongoProvider(Jongo jongo) {
         return () -> jongo;
     }
+
 }

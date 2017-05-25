@@ -6,6 +6,7 @@ import arpinum.command.CommandHandler;
 import arpinum.command.CommandMiddleware;
 import arpinum.ddd.evenement.Event;
 import io.vavr.Tuple2;
+import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.concurrent.Future;
 import io.vavr.control.Try;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 
@@ -20,10 +22,10 @@ import java.util.concurrent.ExecutorService;
 public class CommandBusAsynchronous implements CommandBus {
 
     @Inject
-    public CommandBusAsynchronous(Seq<CommandMiddleware> middlewares, Seq<CommandHandler> handlers, ExecutorService executor) {
+    public CommandBusAsynchronous(Set<CommandMiddleware> middlewares, Set<CommandHandler> handlers, ExecutorService executor) {
         this.executor = executor;
-        this.handlers = handlers;
-        middlewareChain = middlewares.foldRight(new HandlerInvokation(), Chain::new);
+        this.handlers = List.ofAll(handlers);
+        middlewareChain = List.ofAll(middlewares).foldRight(new HandlerInvokation(), Chain::new);
     }
 
     @Override

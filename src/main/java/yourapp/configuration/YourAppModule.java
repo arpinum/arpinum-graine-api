@@ -15,10 +15,9 @@ public class YourAppModule extends AbstractModule {
     @Override
     protected void configure() {
         binder().bind(Key.get(String.class, Names.named("boundedcontext.name"))).toInstance("yourapp");
-        install(new EventBusModule("yourapp"));
+        //install(new EventBusModule("yourapp"));
         install(new EventStoreModule());
         install(new CqrsModule("yourapp"));
-        install(new WebModule());
         bind(Repositories.class).to(RepositoriesEventSourced.class).in(Singleton.class);
         requestStaticInjection(Repositories.class);
     }

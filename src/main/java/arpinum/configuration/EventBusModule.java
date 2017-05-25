@@ -7,7 +7,7 @@ import arpinum.ddd.evenement.EventBus;
 import arpinum.ddd.evenement.EventCaptor;
 import arpinum.ddd.evenement.EventBusMiddleware;
 import arpinum.infrastructure.bus.event.CommandSynchronizedEventBus;
-import arpinum.infrastructure.bus.guice.BusMagique;
+import arpinum.infrastructure.bus.guice.ScanMagique;
 
 import java.util.Set;
 
@@ -24,7 +24,7 @@ public class EventBusModule extends AbstractModule {
     }
     private void configureEventBus() {
         final Multibinder<EventBusMiddleware> multibinder = Multibinder.newSetBinder(binder(), EventBusMiddleware.class);
-        BusMagique.scanPackageAndBind(packageName, EventCaptor.class, binder());
+        ScanMagique.scanPackageAndBind(packageName, EventCaptor.class, binder());
         bind(EventBus.class).to(CommandSynchronizedEventBus.class).asEagerSingleton();
     }
 

@@ -2,13 +2,12 @@ package arpinum.configuration;
 
 import com.google.inject.Stage;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class Configuration {
 
     public static Stage stage(String context, Logger logger) {
         final String env = Environment.get();
-        logger.info("Configuration de " + context + " en mode {}", env);
+        logger.info("Configuring {} in {}", context, env);
         if ("dev".equals(env)) {
             return Stage.DEVELOPMENT;
         }
@@ -20,5 +19,4 @@ public final class Configuration {
 
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 }
