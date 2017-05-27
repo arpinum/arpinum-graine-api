@@ -9,7 +9,6 @@ import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.concurrent.Future;
-import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +36,9 @@ public class CommandBusAsynchronous implements CommandBus {
     }
 
     private <TReponse> Future<TReponse> execute(CommandHandler<Command<TReponse>, TReponse> handler, Command<TReponse> command) {
-        return Future.fromTry(executor, Try.ofSupplier(() -> middlewareChain
+        return Future.of(executor, () -> middlewareChain
                 .apply(handler, command)
-                .apply((r, e) -> r)));
+                .apply((r, e) -> r));
     }
 
 

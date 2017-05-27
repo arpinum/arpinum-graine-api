@@ -22,7 +22,7 @@ class CommandBusAsynchronousTest extends Specification {
     def "invokes handler"() {
         given:
         def handler = new FakeCommandHandler()
-        def bus = new CommandBusAsynchronous(List.empty(), List.of(handler), executor)
+        def bus = new CommandBusAsynchronous([] as Set, [handler] as Set, executor)
         def command = new FakeMessage()
 
         when:
@@ -40,7 +40,7 @@ class CommandBusAsynchronousTest extends Specification {
         def middleware = new FakeMiddleware()
 
 
-        def bus = new CommandBusAsynchronous(List.of(middleware), List.of(handler), executor)
+        def bus = new CommandBusAsynchronous([middleware] as Set, [handler] as Set, executor)
         def command = new FakeMessage()
 
         when:
@@ -58,7 +58,7 @@ class CommandBusAsynchronousTest extends Specification {
         def calls = []
         def firstMiddleware = new FakeMiddleware(calls)
         def secondMiddleware = new FakeMiddleware(calls)
-        def bus = new CommandBusAsynchronous(List.of(firstMiddleware, secondMiddleware), List.of(handler), executor)
+        def bus = new CommandBusAsynchronous([firstMiddleware, secondMiddleware] as Set, [handler] as Set, executor)
         def command = new FakeMessage()
 
         when:

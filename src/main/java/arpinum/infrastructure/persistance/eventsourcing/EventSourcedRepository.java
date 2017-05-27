@@ -39,16 +39,11 @@ public class EventSourcedRepository<TId, TRoot extends BaseAggregate<TId>> imple
         if (eventStore.count(tId, type) == 0) {
             throw new IllegalArgumentException(String.format("Aggregate not found %s with id %s", typeToken, tId));
         }
-        TRoot tRoot;
         try (Stream<Event<TRoot>> events = eventStore.allOf(tId, type)) {
-            tRoot = createAggregateInstance();
+            TRoot tRoot = createAggregateInstance();
             invokeHandlers(events, tRoot);
+            return tRoot;
         }
-        return tRoot;
-    }
-
-    private Class<TRoot> type() {
-        return (Class<TRoot>) typeToken.getRawType();
     }
 
     private TRoot createAggregateInstance() {
@@ -81,7 +76,11 @@ public class EventSourcedRepository<TId, TRoot extends BaseAggregate<TId>> imple
 
     @Override
     public void delete(TRoot tRoot) {
+        eventStore.markAllAsDeleted(tRoot.getId(), type());
+    }
 
+    private Class<TRoot> type() {
+        return (Class<TRoot>) typeToken.getRawType();
     }
 
     protected EventStore eventStore;

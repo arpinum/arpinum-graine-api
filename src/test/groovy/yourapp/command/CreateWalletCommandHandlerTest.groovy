@@ -13,7 +13,7 @@ class CreateWalletCommandHandlerTest extends Specification {
 
     def "creates wallet and returns UUID"() {
         given:
-        def command = new CreateWalletCommand("name")
+        def command = new CreateWalletCommand(name: "name")
 
         when:
         def result = new CreateWalletCommandHandler().execute(command)

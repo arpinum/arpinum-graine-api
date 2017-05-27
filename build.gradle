@@ -39,6 +39,7 @@ dependencies {
 
     compile "org.jboss.resteasy:resteasy-guice:$restEasyVersion"
     compile "org.jboss.resteasy:resteasy-undertow:$restEasyVersion"
+    compile "org.jboss.resteasy:resteasy-jackson2-provider:$restEasyVersion"
     compile 'org.cfg4j:cfg4j-core:4.4.0'
 
 
