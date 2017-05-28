@@ -2,10 +2,10 @@ package arpinum.infrastructure.persistance.eventsourcing;
 
 
 import arpinum.ddd.BaseAggregateWithUuid;
-import arpinum.ddd.evenement.Event;
-import arpinum.ddd.evenement.EventBus;
-import arpinum.ddd.evenement.EventSourceHandler;
-import arpinum.ddd.evenement.EventStore;
+import arpinum.ddd.event.Event;
+import arpinum.ddd.event.EventBus;
+import arpinum.ddd.event.EventSourceHandler;
+import arpinum.ddd.event.EventStore;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -2,8 +2,7 @@ package arpinum.infrastructure.persistance.eventsourcing;
 
 
 import arpinum.ddd.BaseAggregate;
-import arpinum.ddd.evenement.EventBus;
-import arpinum.ddd.evenement.EventStore;
+import arpinum.ddd.event.EventStore;
 
 import java.util.UUID;
 

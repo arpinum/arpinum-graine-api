@@ -1,7 +1,7 @@
 package arpinum.infrastructure.persistance.eventsourcing;
 
-import arpinum.ddd.evenement.Event;
-import arpinum.ddd.evenement.EventStore;
+import arpinum.ddd.event.Event;
+import arpinum.ddd.event.EventStore;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 

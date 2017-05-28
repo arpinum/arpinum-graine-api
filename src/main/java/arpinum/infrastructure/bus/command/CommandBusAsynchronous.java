@@ -4,7 +4,7 @@ import arpinum.command.Command;
 import arpinum.command.CommandBus;
 import arpinum.command.CommandHandler;
 import arpinum.command.CommandMiddleware;
-import arpinum.ddd.evenement.Event;
+import arpinum.ddd.event.Event;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;

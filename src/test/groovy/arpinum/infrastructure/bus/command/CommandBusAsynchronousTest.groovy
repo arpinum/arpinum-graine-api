@@ -3,13 +3,12 @@ package arpinum.infrastructure.bus.command
 import arpinum.command.Command
 import arpinum.command.CommandHandler
 import arpinum.command.CommandMiddleware
-import arpinum.ddd.evenement.Event
+import arpinum.ddd.event.Event
 import com.google.common.util.concurrent.MoreExecutors
 import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.collection.List
 import io.vavr.collection.Seq
-import io.vavr.concurrent.Future
 import spock.lang.Specification
 
 import java.util.function.Supplier

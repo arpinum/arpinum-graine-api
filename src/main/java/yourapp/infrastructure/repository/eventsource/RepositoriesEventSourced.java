@@ -1,7 +1,7 @@
 package yourapp.infrastructure.repository.eventsource;
 
 
-import arpinum.ddd.evenement.EventStore;
+import arpinum.ddd.event.EventStore;
 import yourapp.model.Repositories;
 import yourapp.model.wallet.WalletRepository;
 

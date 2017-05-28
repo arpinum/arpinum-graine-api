@@ -1,7 +1,7 @@
 package arpinum.command;
 
 
-import arpinum.ddd.evenement.Event;
+import arpinum.ddd.event.Event;
 import arpinum.infrastructure.Nothing;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;

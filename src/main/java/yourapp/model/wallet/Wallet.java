@@ -2,7 +2,9 @@ package yourapp.model.wallet;
 
 
 import arpinum.ddd.BaseAggregateWithUuid;
-import arpinum.ddd.evenement.EventSourceHandler;
+import arpinum.ddd.event.EventSourceHandler;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 
 import java.util.UUID;
 
@@ -13,9 +15,9 @@ public class Wallet extends BaseAggregateWithUuid {
     }
 
     public static class Factory {
-        public Wallet create(String name) {
+        public Tuple2<Wallet, WalletCreated> create(String name) {
             Wallet wallet = new Wallet();
-            return wallet;
+            return Tuple.of(wallet, new WalletCreated(wallet.getId(), name));
         }
     }
 

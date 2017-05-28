@@ -1,6 +1,6 @@
 package yourapp.infrastructure.repository.eventsource;
 
-import arpinum.ddd.evenement.EventStore;
+import arpinum.ddd.event.EventStore;
 import arpinum.infrastructure.persistance.eventsourcing.EventSourcedRepositoryWithUuid;
 import yourapp.model.wallet.Wallet;
 import yourapp.model.wallet.WalletRepository;

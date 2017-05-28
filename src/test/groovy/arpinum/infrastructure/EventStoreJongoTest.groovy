@@ -1,6 +1,6 @@
 package arpinum.infrastructure
 
-import arpinum.ddd.evenement.Event
+import arpinum.ddd.event.Event
 import org.junit.Rule
 
 import arpinum.infrastructure.persistance.eventsourcing.EventStoreJongo

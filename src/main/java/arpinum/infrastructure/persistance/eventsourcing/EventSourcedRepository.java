@@ -2,9 +2,9 @@ package arpinum.infrastructure.persistance.eventsourcing;
 
 import arpinum.ddd.BaseAggregate;
 import arpinum.ddd.Repository;
-import arpinum.ddd.evenement.Event;
-import arpinum.ddd.evenement.EventSourceHandler;
-import arpinum.ddd.evenement.EventStore;
+import arpinum.ddd.event.Event;
+import arpinum.ddd.event.EventSourceHandler;
+import arpinum.ddd.event.EventStore;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import org.slf4j.LoggerFactory;

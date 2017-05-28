@@ -1,6 +1,6 @@
 package yourapp.model.wallet;
 
-import arpinum.ddd.evenement.Event;
+import arpinum.ddd.event.Event;
 
 import java.util.UUID;
 

@@ -1,6 +1,6 @@
 package arpinum.infrastructure.bus
 
-import arpinum.ddd.evenement.Synchrone
+import arpinum.ddd.event.Synchrone
 import com.google.common.collect.Sets
 import spock.lang.Specification
 

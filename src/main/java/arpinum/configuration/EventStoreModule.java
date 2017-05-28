@@ -1,7 +1,7 @@
 package arpinum.configuration;
 
 
-import arpinum.ddd.evenement.EventStore;
+import arpinum.ddd.event.EventStore;
 import arpinum.infrastructure.persistance.eventsourcing.EventStoreJongo;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;

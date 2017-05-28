@@ -1,7 +1,7 @@
 package arpinum.infrastructure.persistance.eventsourcing;
 
-import arpinum.ddd.evenement.Event;
-import arpinum.ddd.evenement.EventStore;
+import arpinum.ddd.event.Event;
+import arpinum.ddd.event.EventStore;
 import org.jongo.Jongo;
 import org.jongo.MongoCursor;
 import org.slf4j.Logger;

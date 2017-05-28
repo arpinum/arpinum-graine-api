@@ -1,7 +1,7 @@
 package yourapp.query.wallet.projection;
 
 
-import arpinum.ddd.evenement.EventCaptor;
+import arpinum.ddd.event.EventCaptor;
 import arpinum.infrastructure.date.Dates;
 import org.jongo.Jongo;
 import yourapp.model.wallet.WalletCreated;
@@ -18,7 +18,7 @@ public class OnWalletCreatedFillSummary implements EventCaptor<WalletCreated>{
     }
 
     @Override
-    public void executeEvent(WalletCreated event) {
+    public void execute(WalletCreated event) {
         jongo.getCollection("view_wallet")
                 .update("{_id:#}",event.getTargetId())
                 .upsert()

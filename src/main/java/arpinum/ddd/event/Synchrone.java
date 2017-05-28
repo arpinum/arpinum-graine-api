@@ -1,4 +1,4 @@
-package arpinum.ddd.evenement;
+package arpinum.ddd.event;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

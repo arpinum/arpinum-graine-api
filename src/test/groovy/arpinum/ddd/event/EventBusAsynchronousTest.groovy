@@ -1,16 +1,16 @@
-package arpinum.ddd.evenement
+package arpinum.ddd.event
 
 import arpinum.ddd.BaseAggregate
-import arpinum.infrastructure.bus.event.AsyncEventBus
+import arpinum.infrastructure.bus.event.EventBusAsynchronous
 import com.google.common.collect.Sets
 import spock.lang.Specification
 
-class AsyncEventBusTest extends Specification {
+class EventBusAsynchronousTest extends Specification {
 
     def "waits to propagage"() {
         given:
         def captor = new FakeEventCaptor()
-        AsyncEventBus bus = busAvec(captor)
+        EventBusAsynchronous bus = busAvec(captor)
 
         when:
         bus.publish(new FakeEvent())
@@ -23,7 +23,7 @@ class AsyncEventBusTest extends Specification {
     def "executes events after commands"() {
         given:
         def captor = new FakeEventCaptor()
-        AsyncEventBus bus = busAvec(captor)
+        EventBusAsynchronous bus = busAvec(captor)
 
         when:
         bus.publish(new FakeEvent())
@@ -34,7 +34,7 @@ class AsyncEventBusTest extends Specification {
     }
 
     private busAvec(EventCaptor<? extends Event> captor) {
-        new AsyncEventBus(Sets.newHashSet(), Sets.newHashSet(captor))
+        new EventBusAsynchronous(Sets.newHashSet(), Sets.newHashSet(captor))
     }
 
     static class FakeEvent extends Event<FakeAggregate> {
@@ -50,7 +50,7 @@ class AsyncEventBusTest extends Specification {
         boolean called
 
         @Override
-        void executeEvent(FakeEvent evenement) {
+        void execute(FakeEvent evenement) {
             called = true
         }
     }

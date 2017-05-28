@@ -1,4 +1,4 @@
-package arpinum.ddd.evenement;
+package arpinum.ddd.event;
 
 import arpinum.infrastructure.Nothing;
 import arpinum.infrastructure.bus.Message;

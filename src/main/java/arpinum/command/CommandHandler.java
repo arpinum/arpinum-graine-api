@@ -1,7 +1,7 @@
 package arpinum.command;
 
 
-import arpinum.ddd.evenement.Event;
+import arpinum.ddd.event.Event;
 import com.google.common.reflect.TypeToken;
 import io.vavr.Tuple2;
 import io.vavr.collection.Seq;
