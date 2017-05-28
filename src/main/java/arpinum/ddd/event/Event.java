@@ -1,13 +1,11 @@
 package arpinum.ddd.event;
 
-import arpinum.infrastructure.Nothing;
-import arpinum.infrastructure.bus.Message;
 import arpinum.infrastructure.date.Dates;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.reflect.TypeToken;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "_class")
-public abstract class Event<T> implements Message<Nothing> {
+public abstract class Event<T> {
 
     protected Event() {
     }
