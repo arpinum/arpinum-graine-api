@@ -11,9 +11,7 @@ import io.vavr.collection.Seq;
 import javax.inject.Inject;
 import java.util.function.Supplier;
 
-public class EventDispatcherMiddleware implements CommandMiddleware{
-
-    private EventBus bus;
+public class EventDispatcherMiddleware implements CommandMiddleware {
 
     @Inject
     public EventDispatcherMiddleware(EventBus bus) {
@@ -23,9 +21,9 @@ public class EventDispatcherMiddleware implements CommandMiddleware{
     @Override
     public Tuple2<?, Seq<Event<?>>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event<?>>>> next) {
         final Tuple2<?, Seq<Event<?>>> result = next.get();
-        bus.publish(result.apply((r, e) ->
-                e.map(event -> (Event) event).toJavaArray(Event.class)
-        ));
+        bus.publish(result.apply((r, e) -> e));
         return result;
     }
+
+    private EventBus bus;
 }

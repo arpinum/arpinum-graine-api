@@ -5,7 +5,10 @@ import arpinum.ddd.event.EventBus;
 import arpinum.ddd.event.EventBusMiddleware;
 import arpinum.ddd.event.EventCaptor;
 import arpinum.infrastructure.bus.command.CommandBusAsynchronous;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 import io.vavr.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +29,12 @@ public class EventBusAsynchronous implements EventBus {
 
 
     @Override
-    public void publish(Event[] events) {
-        for (Event event : events) {
-            captors.find(h -> h.eventType().equals(event.getClass()))
-                    .map(h -> (EventCaptor<Event<?>>) h)
-                    .map(h -> execute(h, event))
-                    .getOrElse(() -> Future.failed(new IllegalArgumentException(String.format("Can't find captor for %s", event.getClass()))));
-        }
-
+    public void publish(Seq<Event<?>> events) {
+        events.map(e -> Tuple.of(e, captors.filter(c -> c.eventType().equals(e.getClass()))))
+                .map(t -> t.apply((e, c) -> c.map(h -> execute(e, h))));
     }
 
-    private Future<Boolean> execute(EventCaptor<Event<?>> captor, Event<?> event) {
+    private Future<Boolean> execute(Event<?> event, EventCaptor<Event<?>> captor) {
         return Future.of(executorService, () -> middlewareChain.apply(captor, event));
     }
 

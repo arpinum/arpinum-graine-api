@@ -30,11 +30,11 @@ public class CommandValidator implements CommandMiddleware {
     public void validate(Command<?> command) {
         Set<ConstraintViolation<Message<?>>> violations = validator.validate(command);
         if (!violations.isEmpty()) {
-            throw new ValidationException(enMessages(violations));
+            throw new ValidationException(toMessages(violations));
         }
     }
 
-    private List<String> enMessages(Set<ConstraintViolation<Message<?>>> violations) {
+    private List<String> toMessages(Set<ConstraintViolation<Message<?>>> violations) {
         return violations.stream().map((violation) -> violation.getPropertyPath() + " " + violation.getMessage()).collect(Collectors.toList());
     }
 

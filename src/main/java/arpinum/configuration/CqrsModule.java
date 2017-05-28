@@ -7,6 +7,7 @@ import arpinum.command.CommandValidator;
 import arpinum.infrastructure.bus.command.CommandBusAsynchronous;
 import arpinum.infrastructure.bus.event.EventDispatcherMiddleware;
 import arpinum.infrastructure.bus.guice.ScanMagique;
+import arpinum.infrastructure.persistance.eventsourcing.EventStoreMiddleware;
 import arpinum.query.QueryBus;
 import arpinum.query.QueryHandler;
 import arpinum.query.QuerySynchronization;
@@ -35,7 +36,7 @@ public class CqrsModule extends AbstractModule {
         final Multibinder<CommandMiddleware> multibinder = Multibinder.newSetBinder(binder(), CommandMiddleware.class);
         multibinder.addBinding().to(CommandValidator.class);
         multibinder.addBinding().to(EventDispatcherMiddleware.class);
-        //multibinder.addBinding().to(CommandSynchronizedEventBus.class);
+        multibinder.addBinding().to(EventStoreMiddleware.class);
         ScanMagique.scanPackageAndBind(commandPackage, CommandHandler.class, binder());
         bind(CommandBus.class).to(CommandBusAsynchronous.class).asEagerSingleton();
     }

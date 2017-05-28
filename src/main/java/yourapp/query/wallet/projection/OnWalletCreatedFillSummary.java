@@ -22,6 +22,6 @@ public class OnWalletCreatedFillSummary implements EventCaptor<WalletCreated>{
         jongo.getCollection("view_wallet")
                 .update("{_id:#}",event.getTargetId())
                 .upsert()
-                .with("{$set:{creationDate:#}}", Dates.fromTimestamp(event.getTimestamp()));
+                .with("{$set:{creationDate:#, name:#}}", Dates.fromTimestamp(event.getTimestamp()), event.getName());
     }
 }
