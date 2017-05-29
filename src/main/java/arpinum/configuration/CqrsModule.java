@@ -7,10 +7,11 @@ import arpinum.command.CommandValidator;
 import arpinum.infrastructure.bus.command.CommandBusAsynchronous;
 import arpinum.infrastructure.bus.event.EventDispatcherMiddleware;
 import arpinum.infrastructure.bus.guice.ScanMagique;
+import arpinum.infrastructure.bus.query.QueryBusAsynchronous;
 import arpinum.infrastructure.persistance.eventsourcing.EventStoreMiddleware;
 import arpinum.query.QueryBus;
 import arpinum.query.QueryHandler;
-import arpinum.query.QuerySynchronization;
+import arpinum.query.QueryMiddleware;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -42,9 +43,9 @@ public class CqrsModule extends AbstractModule {
     }
 
     private void configureQuery() {
-        final Multibinder<QuerySynchronization> multibinder = Multibinder.newSetBinder(binder(), QuerySynchronization.class);
+        final Multibinder<QueryMiddleware> multibinder = Multibinder.newSetBinder(binder(), QueryMiddleware.class);
         ScanMagique.scanPackageAndBind(queryPackage, QueryHandler.class, binder());
-        bind(QueryBus.class).asEagerSingleton();
+        bind(QueryBus.class).to(QueryBusAsynchronous.class).asEagerSingleton();
     }
 
     @Provides

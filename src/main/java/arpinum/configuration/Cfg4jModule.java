@@ -1,7 +1,7 @@
 package arpinum.configuration;
 
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -16,7 +16,6 @@ import org.cfg4j.source.files.FilesConfigurationSource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Cfg4jModule extends AbstractModule {
 
@@ -28,8 +27,9 @@ public class Cfg4jModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool(new ThreadFactoryBuilder()
-                .setNameFormat("app-pool-%d").build()));
+        /*bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool(new ThreadFactoryBuilder()
+                .setNameFormat("app-pool-%d").build()));*/
+        bind(ExecutorService.class).toInstance(MoreExecutors.newDirectExecutorService());
     }
 
     @Provides

@@ -1,7 +1,7 @@
 package arpinum.command
 
 import org.hibernate.validator.constraints.NotEmpty
-import arpinum.infrastructure.bus.Message
+
 import spock.lang.Specification
 
 import javax.validation.Validation

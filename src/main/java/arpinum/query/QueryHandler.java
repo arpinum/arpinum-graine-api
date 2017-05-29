@@ -1,7 +1,14 @@
 package arpinum.query;
 
 
-import arpinum.infrastructure.bus.MessageCaptor;
+import com.google.common.reflect.TypeToken;
 
-public interface QueryHandler<TRecherche extends Query<TReponse>, TReponse> extends MessageCaptor<TRecherche, TReponse> {
+public interface QueryHandler<TQuery extends Query<TResponse>, TResponse> {
+
+    TResponse execute(TQuery command);
+
+    default Class<TQuery> queryType() {
+        return (Class<TQuery>) new TypeToken<TQuery>(getClass()) {
+        }.getRawType();
+    }
 }

@@ -2,7 +2,6 @@ package arpinum.command;
 
 
 import arpinum.ddd.event.Event;
-import arpinum.infrastructure.bus.Message;
 import io.vavr.Tuple2;
 import io.vavr.collection.Seq;
 

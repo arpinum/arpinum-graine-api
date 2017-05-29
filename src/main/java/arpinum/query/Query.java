@@ -1,10 +1,8 @@
 package arpinum.query;
 
 
-import arpinum.infrastructure.bus.Message;
-
 @SuppressWarnings("UnusedDeclaration")
-public class Query<TReponse> implements Message<TReponse> {
+public class Query<TReponse> {
 
     public Query<TReponse> limit(int limite) {
         this.limit = limite;

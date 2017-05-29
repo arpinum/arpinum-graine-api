@@ -1,13 +1,14 @@
 package arpinum.query;
 
 import arpinum.infrastructure.persistance.JongoProvider;
+import arpinum.query.Query;
+import arpinum.query.QueryHandler;
 import org.jongo.*;
 
 import javax.inject.Inject;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class QueryHandlerJongo<TRecherche extends Query<TReponse>, TReponse> implements QueryHandler<TRecherche, TReponse> {
-
 
     @Inject
     protected void setJongo(JongoProvider provider) {

@@ -1,4 +1,4 @@
-package arpinum.query;
+package arpinum.infrastructure.persistance.query;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
