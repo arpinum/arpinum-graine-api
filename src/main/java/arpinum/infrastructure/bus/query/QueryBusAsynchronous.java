@@ -1,6 +1,7 @@
 package arpinum.infrastructure.bus.query;
 
 
+import arpinum.infrastructure.bus.CaptorNotFound;
 import arpinum.query.Query;
 import arpinum.query.QueryBus;
 import arpinum.query.QueryHandler;
@@ -28,7 +29,7 @@ public class QueryBusAsynchronous implements QueryBus {
         return handlers.find(h -> h.queryType().equals(query.getClass()))
                 .map(h -> (QueryHandler<Query<TResponse>, TResponse>) h)
                 .map(h -> execute(h, query))
-                .getOrElse(() -> Future.failed(new IllegalArgumentException(String.format("Can't find handler for %s", query.getClass()))));
+                .getOrElse(() -> Future.failed(new CaptorNotFound(query.getClass())));
     }
 
     private <TReponse> Future<TReponse> execute(QueryHandler<Query<TReponse>, TReponse> handler, Query<TReponse> command) {

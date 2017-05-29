@@ -5,6 +5,7 @@ import arpinum.command.CommandBus;
 import arpinum.command.CommandHandler;
 import arpinum.command.CommandMiddleware;
 import arpinum.ddd.event.Event;
+import arpinum.infrastructure.bus.CaptorNotFound;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
@@ -32,7 +33,7 @@ public class CommandBusAsynchronous implements CommandBus {
         return handlers.find(h -> h.commandType().equals(message.getClass()))
                 .map(h -> (CommandHandler<Command<TReponse>, TReponse>) h)
                 .map(h -> execute(h, message))
-                .getOrElse(() -> Future.failed(new IllegalArgumentException(String.format("Can't find handler for %s", message.getClass()))));
+                .getOrElse(() -> Future.failed(new CaptorNotFound(message.getClass())));
     }
 
     private <TReponse> Future<TReponse> execute(CommandHandler<Command<TReponse>, TReponse> handler, Command<TReponse> command) {
