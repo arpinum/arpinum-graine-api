@@ -88,9 +88,12 @@ public class EventStoreJongo implements EventStore {
 
         @Override
         public <T> T consume(Function1<Stream<Event>, T> consumer) {
-            T apply = consumer.apply(Stream.ofAll(results));
-            closeQuietly(results);
-            return apply;
+            return consumer
+                    .andThen(r -> {
+                        closeQuietly(results);
+                        return r;
+                    })
+                    .apply(Stream.ofAll(results));
         }
     }
 }
