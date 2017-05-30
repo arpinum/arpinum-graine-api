@@ -2,47 +2,54 @@ package arpinum.infrastructure.persistance.eventsourcing;
 
 import arpinum.ddd.BaseAggregate;
 import arpinum.ddd.Repository;
+import arpinum.ddd.event.Cursor;
 import arpinum.ddd.event.Event;
 import arpinum.ddd.event.EventSourceHandler;
 import arpinum.ddd.event.EventStore;
-import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
+import io.vavr.Tuple;
+import io.vavr.collection.Map;
+import io.vavr.collection.Vector;
+import io.vavr.control.Option;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 public class EventSourcedRepository<TId, TRoot extends BaseAggregate<TId>> implements Repository<TId, TRoot> {
 
     public EventSourcedRepository(EventStore eventStore) {
         this.eventStore = eventStore;
-        for (Method method : typeToken.getRawType().getMethods()) {
-            if (method.getAnnotationsByType(EventSourceHandler.class).length > 0) {
-                handlers.put(method.getParameters()[0].getType(), method);
-            }
-        }
+        handlers = Vector.of(typeToken.getRawType().getMethods())
+                .filter(m -> m.getAnnotationsByType(EventSourceHandler.class).length > 0)
+                .toMap(m -> Tuple.of(m.getParameters()[0].getType(), m));
         if (handlers.size() == 0) {
             LoggerFactory.getLogger(EventSourcedRepository.class).warn("No event handlers on {}", typeToken);
         }
     }
 
     @Override
-    public TRoot get(TId tId) {
+    public Option<TRoot> get(TId tId) {
         return load(tId);
     }
 
-    private TRoot load(TId tId) {
-        Class<TRoot> type = type();
-        if (eventStore.count(tId, type) == 0) {
-            throw new IllegalArgumentException(String.format("Aggregate not found %s with id %s", typeToken, tId));
+    private Option<TRoot> load(TId tId) {
+        Cursor cursor = eventStore.allOf(tId, type());
+        if (cursor.count() == 0) {
+            return Option.none();
         }
-        try (Stream<Event<TRoot>> events = eventStore.allOf(tId, type)) {
-            TRoot tRoot = createAggregateInstance();
-            invokeHandlers(events, tRoot);
-            return tRoot;
+        return Option.of(cursor.consume(stream -> stream.foldLeft(createAggregateInstance(), (i, e) -> {
+            handlers.get(e.getClass())
+                    .peek(h -> invokeQuietly(i, e, h));
+            return i;
+        })));
+    }
+
+    private Object invokeQuietly(TRoot i, Event e, Method h) {
+        try {
+            return h.invoke(i, e);
+        } catch (IllegalAccessException | InvocationTargetException e1) {
+            throw new EventStoreException(e1);
         }
     }
 
@@ -52,16 +59,6 @@ public class EventSourcedRepository<TId, TRoot extends BaseAggregate<TId>> imple
         } catch (InstantiationException | IllegalAccessException e) {
             throw new EventStoreException(e);
         }
-    }
-
-    private void invokeHandlers(Stream<Event<TRoot>> events, TRoot tRoot) {
-        events.forEach(e -> Optional.ofNullable(handlers.get(e.getClass())).ifPresent(h -> {
-            try {
-                h.invoke(tRoot, e);
-            } catch (IllegalAccessException | InvocationTargetException e1) {
-                throw new EventStoreException(e1);
-            }
-        }));
     }
 
     @Override
@@ -84,7 +81,7 @@ public class EventSourcedRepository<TId, TRoot extends BaseAggregate<TId>> imple
     }
 
     protected EventStore eventStore;
-    private Map<Class<?>, Method> handlers = Maps.newConcurrentMap();
+    private Map<Class<?>, Method> handlers;
     private final TypeToken<TRoot> typeToken = new TypeToken<TRoot>(getClass()) {
     };
 }

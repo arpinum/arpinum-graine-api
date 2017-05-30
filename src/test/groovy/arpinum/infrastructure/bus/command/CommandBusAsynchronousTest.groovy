@@ -89,7 +89,7 @@ class CommandBusAsynchronousTest extends Specification {
         }
 
         @Override
-        Tuple2<?, Seq<Event<?>>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event<?>>>> next) {
+        Tuple2<?, Seq<Event>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event>>> next) {
             called = true
             calls << this
             next.get()

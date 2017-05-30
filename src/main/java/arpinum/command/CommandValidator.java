@@ -21,7 +21,7 @@ public class CommandValidator implements CommandMiddleware {
     }
 
     @Override
-    public Tuple2<?, Seq<Event<?>>> intercept(Command<?> command, Supplier<Tuple2<?, Seq<Event<?>>>> next) {
+    public Tuple2<?, Seq<Event>> intercept(Command<?> command, Supplier<Tuple2<?, Seq<Event>>> next) {
         validate(command);
         return next.get();
     }

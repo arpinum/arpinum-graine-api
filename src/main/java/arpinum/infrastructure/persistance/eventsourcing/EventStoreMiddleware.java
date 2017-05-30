@@ -21,11 +21,10 @@ public class EventStoreMiddleware implements CommandMiddleware {
     }
 
     @Override
-    public Tuple2<?, Seq<Event<?>>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event<?>>>> next) {
-        Tuple2<?, Seq<Event<?>>> result = next.get();
+    public Tuple2<?, Seq<Event>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event>>> next) {
+        Tuple2<?, Seq<Event>> result = next.get();
         eventStore.save(result.apply((r, e) -> e)
-                .map(e -> (Event) e)
-                .toJavaArray(Event.class));
+                .map(e -> (Event) e));
         return result;
     }
 }

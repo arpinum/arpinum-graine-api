@@ -29,7 +29,7 @@ public class EventBusAsynchronous implements EventBus {
 
 
     @Override
-    public void publish(Seq<Event<?>> events) {
+    public void publish(Seq<Event> events) {
         events.map(e -> Tuple.of(e, captors.filter(c -> c.eventType().equals(e.getClass()))))
                 .map(t -> t.apply((e, c) -> c.map(h -> execute(e, h))));
     }

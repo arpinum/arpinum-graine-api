@@ -6,6 +6,9 @@ import arpinum.ddd.event.Event;
 import arpinum.ddd.event.EventBus;
 import arpinum.ddd.event.EventSourceHandler;
 import arpinum.ddd.event.EventStore;
+import io.vavr.collection.List;
+import io.vavr.collection.Vector;
+import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,18 +33,19 @@ public class EventSourcedRepositoryTest {
     @Test
     public void returns_aggregate() throws Exception {
         UUID targetId = UUID.randomUUID();
-        eventStore.save(new CreatedEvent(targetId));
+        eventStore.save(Vector.of(new CreatedEvent(targetId)));
 
-        EventSourcedAggregate aggregate = repository.get(targetId);
+        Option<EventSourcedAggregate> aggregate = repository.get(targetId);
 
-        assertThat(aggregate).isNotNull();
-        assertThat(aggregate.getId()).isEqualTo(targetId);
+        assertThat(aggregate).isNotEmpty();
+
+        assertThat(aggregate.get().getId()).isEqualTo(targetId);
     }
 
     @Test
     public void says_it_exists() throws Exception {
         UUID targetId = UUID.randomUUID();
-        eventStore.save(new CreatedEvent(targetId));
+        eventStore.save(Vector.of(new CreatedEvent(targetId)));
 
         boolean exists = repository.exists(targetId);
 
@@ -52,7 +56,7 @@ public class EventSourcedRepositoryTest {
     public void mark_events_as_deleted() throws Exception {
         UUID targetId = UUID.randomUUID();
         CreatedEvent event = new CreatedEvent(targetId);
-        eventStore.save(event);
+        eventStore.save(List.of(event));
         EventSourcedAggregate aggregate = new EventSourcedAggregate(targetId);
         aggregate.handle(event);
         aggregate.genEvent(event);

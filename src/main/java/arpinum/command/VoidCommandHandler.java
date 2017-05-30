@@ -11,11 +11,10 @@ public interface VoidCommandHandler<TCommand extends VoidCommand> extends Comman
 
 
     @Override
-    default Tuple2<Nothing, Seq<Event<?>>> execute(TCommand tCommand) {
-        doExecute(tCommand);
-        return Tuple.of(null, null);
+    default Tuple2<Nothing, Seq<Event>> execute(TCommand tCommand) {
+        return Tuple.of(null, doExecute(tCommand));
     }
 
-    void doExecute(TCommand command);
+    Seq<Event> doExecute(TCommand command);
 
 }

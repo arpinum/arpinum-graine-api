@@ -25,7 +25,7 @@ class EventStoreMiddlewareTest extends Specification {
         def value = middleware.intercept(command, { result })
 
         then:
-        1 * eventStore.save([event])
+        1 * eventStore.save(List.of(event))
         value == result
     }
 

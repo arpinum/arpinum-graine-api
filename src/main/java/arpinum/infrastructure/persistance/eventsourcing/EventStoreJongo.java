@@ -1,7 +1,11 @@
 package arpinum.infrastructure.persistance.eventsourcing;
 
+import arpinum.ddd.event.Cursor;
 import arpinum.ddd.event.Event;
 import arpinum.ddd.event.EventStore;
+import io.vavr.Function1;
+import io.vavr.collection.Seq;
+import io.vavr.collection.Stream;
 import org.jongo.Jongo;
 import org.jongo.MongoCursor;
 import org.slf4j.Logger;
@@ -10,8 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+
 
 public class EventStoreJongo implements EventStore {
 
@@ -22,32 +25,29 @@ public class EventStoreJongo implements EventStore {
     }
 
     @Override
-    public void save(Event<?>... events) {
-        jongo.getCollection(collection).insert((Object[]) events);
+    public void save(Seq<Event<?>> events) {
+        jongo.getCollection(collection).insert(events.toJavaArray());
     }
 
     @Override
-    public <T> Stream<Event<T>> allOf(Class<T> type) {
+    public <T> Cursor allOf(Class<T> type) {
         MongoCursor<Event> results = jongo.getCollection(collection).find("{targetType:#, _deleted:{$exists:false}}", type.getSimpleName()).as(Event.class);
-        return StreamSupport.stream(results.spliterator(), false).map(e -> (Event<T>) e)
-                .onClose(() -> closeQuietly(results));
+        return new EventCursor(results);
     }
 
     @Override
-    public <T, E extends Event<T>> Stream<E> allOfWithType(Class<T> type, Class<E> eventType) {
+    public <T, E extends Event<T>> Cursor allOfWithType(Class<T> type, Class<E> eventType) {
         MongoCursor<Event> results = jongo
                 .getCollection(collection)
                 .find("{targetType:#, _deleted:{$exists:false}, _class:#}", type.getSimpleName(), eventType.getName())
                 .as(Event.class);
-        return StreamSupport.stream(results.spliterator(), false).map(e -> (E) e)
-                .onClose(() -> closeQuietly(results));
+        return new EventCursor(results);
     }
 
     @Override
-    public <T> Stream<Event<T>> allOf(Object id, Class<T> type) {
+    public <T> Cursor allOf(Object id, Class<T> type) {
         MongoCursor<Event> results = jongo.getCollection(collection).find("{targetType:#, targetId:#, _delete:{$exists:false}}", type.getSimpleName(), id).as(Event.class);
-        return StreamSupport.stream(results.spliterator(), false).map(e -> (Event<T>) e)
-                .onClose(() -> closeQuietly(results));
+        return new EventCursor(results);
     }
 
     @Override
@@ -72,4 +72,25 @@ public class EventStoreJongo implements EventStore {
 
     private Jongo jongo;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventStoreJongo.class);
+
+    private class EventCursor implements Cursor {
+
+        private final MongoCursor<Event> results;
+
+        public EventCursor(MongoCursor<Event> results) {
+            this.results = results;
+        }
+
+        @Override
+        public long count() {
+            return results.count();
+        }
+
+        @Override
+        public <T> T consume(Function1<Stream<Event>, T> consumer) {
+            T apply = consumer.apply(Stream.ofAll(results));
+            closeQuietly(results);
+            return apply;
+        }
+    }
 }

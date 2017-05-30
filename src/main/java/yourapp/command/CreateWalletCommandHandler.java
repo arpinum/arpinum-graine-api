@@ -16,7 +16,7 @@ public class CreateWalletCommandHandler  implements CommandHandler<CreateWalletC
 
 
     @Override
-    public Tuple2<UUID, Seq<Event<?>>> execute(CreateWalletCommand createWalletCommand) {
+    public Tuple2<UUID, Seq<Event>> execute(CreateWalletCommand createWalletCommand) {
         Tuple2<Wallet, WalletCreated> wallet = Wallet.factory().create(createWalletCommand.name);
         return wallet.map((w, e)-> Tuple.of(w.getId(), List.of(e)));
     }

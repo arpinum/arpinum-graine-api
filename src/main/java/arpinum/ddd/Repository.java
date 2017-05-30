@@ -1,8 +1,11 @@
 package arpinum.ddd;
 
+
+import io.vavr.control.Option;
+
 public interface Repository<TId, TRacine extends AggregateRoot<TId>> {
 
-    TRacine get(TId id);
+    Option<TRacine> get(TId id);
 
     boolean exists(TId id);
 

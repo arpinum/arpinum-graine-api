@@ -9,5 +9,5 @@ import java.util.function.Supplier;
 
 public interface CommandMiddleware {
 
-    Tuple2<?, Seq<Event<?>>> intercept(Command<?> message, Supplier< Tuple2<?, Seq<Event<?>>>> next);
+    Tuple2<?, Seq<Event>> intercept(Command<?> message, Supplier< Tuple2<?, Seq<Event>>> next);
 }

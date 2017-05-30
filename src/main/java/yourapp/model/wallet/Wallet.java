@@ -14,6 +14,10 @@ public class Wallet extends BaseAggregateWithUuid {
         return new Factory();
     }
 
+    public WalletNameChanged changeName(String name) {
+        return new WalletNameChanged(getId(), name);
+    }
+
     public static class Factory {
         public Tuple2<Wallet, WalletCreated> create(String name) {
             Wallet wallet = new Wallet();

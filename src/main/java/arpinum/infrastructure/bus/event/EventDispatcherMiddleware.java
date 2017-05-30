@@ -19,8 +19,8 @@ public class EventDispatcherMiddleware implements CommandMiddleware {
     }
 
     @Override
-    public Tuple2<?, Seq<Event<?>>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event<?>>>> next) {
-        final Tuple2<?, Seq<Event<?>>> result = next.get();
+    public Tuple2<?, Seq<Event>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event>>> next) {
+        final Tuple2<?, Seq<Event>> result = next.get();
         bus.publish(result.apply((r, e) -> e));
         return result;
     }

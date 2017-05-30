@@ -1,39 +1,35 @@
 package arpinum.infrastructure.persistance.eventsourcing;
 
+import arpinum.ddd.event.Cursor;
 import arpinum.ddd.event.Event;
 import arpinum.ddd.event.EventStore;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+import io.vavr.Function1;
+import io.vavr.collection.List;
+import io.vavr.collection.Seq;
+import io.vavr.collection.Stream;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EventStoreMemory implements EventStore {
 
     @Override
-    public void save(Event<?>... event) {
-        if (event.length == 0) {
-            return;
-        }
-        events.putAll(event[0].targetType(), Arrays.asList(event));
+    public void save(Seq<Event<?>> events) {
+        this.events = this.events.appendAll(events);
     }
 
     @Override
-    public <T> Stream<Event<T>> allOf(Class<T> type) {
-        return events.get(type).stream().map(e -> (Event<T>) e);
+    public <T> Cursor allOf(Class<T> type) {
+        return new MemoryCursor(events.filter(e -> e.targetType().equals(type)));
     }
 
     @Override
-    public <T, E extends Event<T>> Stream<E> allOfWithType(Class<T> type, Class<E> eventType) {
-        return allOf(type).filter(e -> e.getClass().equals(eventType))
-                .map(e -> (E) e);
+    public <T, E extends Event<T>> Cursor allOfWithType(Class<T> type, Class<E> eventType) {
+        return new MemoryCursor(events.filter(e -> e.targetType().equals(type) && e.getClass().equals(eventType)));
+
     }
 
     @Override
-    public <T> Stream<Event<T>> allOf(Object id, Class<T> type) {
-        return allOf(type).filter(e -> e.getTargetId().equals(id));
+    public <T> Cursor allOf(Object id, Class<T> type) {
+        return new MemoryCursor(events.filter(e -> e.targetType().equals(type) && e.getTargetId().equals(id)));
     }
 
     @Override
@@ -44,10 +40,27 @@ public class EventStoreMemory implements EventStore {
 
     @Override
     public void markAllAsDeleted(Object id, Class<?> type) {
-        List<Event<?>> remaining = events.get(type).stream().filter(e -> !id.equals(e.getTargetId())).collect(Collectors.toList());
-        events.replaceValues(type, remaining);
+        events = events.filter(e -> !id.equals(e.getTargetId()));
     }
 
 
-    private ListMultimap<Class<?>, Event<?>> events = ArrayListMultimap.create();
+    private List<Event> events = List.empty();
+
+    private static class MemoryCursor implements Cursor {
+        private final List<Event> filter;
+
+        public MemoryCursor(List<Event> filter) {
+            this.filter = filter;
+        }
+
+        @Override
+        public long count() {
+            return filter.size();
+        }
+
+        @Override
+        public <T> T consume(Function1<Stream<Event>, T> consumer) {
+            return consumer.apply(filter.toStream());
+        }
+    }
 }

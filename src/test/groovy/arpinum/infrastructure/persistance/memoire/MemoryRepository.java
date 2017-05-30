@@ -1,27 +1,29 @@
 package arpinum.infrastructure.persistance.memoire;
 
-import com.google.common.collect.Sets;
 import arpinum.ddd.AggregateRoot;
 import arpinum.ddd.Repository;
+import io.vavr.collection.HashSet;
+import io.vavr.collection.Set;
+import io.vavr.control.Option;
 
-import java.util.Set;
 
 @SuppressWarnings("UnusedDeclaration")
 public class MemoryRepository<TId, TRacine extends AggregateRoot<TId>> implements Repository<TId, TRacine> {
 
     @Override
-    public TRacine get(TId tId) {
-        return entities.stream().filter(element -> element.getId().equals(tId)).findFirst().orElseThrow(IllegalArgumentException::new);
+    public Option<TRacine> get(TId tId) {
+        return entities.filter(element -> element.getId().equals(tId))
+                .headOption();
     }
 
     @Override
     public boolean exists(TId tId) {
-        return entities.stream().filter(e -> e.getId().equals(tId)).count() > 0;
+        return !get(tId).isEmpty();
     }
 
     @Override
     public void add(TRacine racine) {
-        entities.add(racine);
+        entities = entities.add(racine);
     }
 
     @Override
@@ -33,5 +35,5 @@ public class MemoryRepository<TId, TRacine extends AggregateRoot<TId>> implement
         return entities;
     }
 
-    protected final Set<TRacine> entities = Sets.newHashSet();
+    protected  HashSet<TRacine> entities = HashSet.empty();
 }

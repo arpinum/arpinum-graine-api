@@ -1,16 +1,17 @@
 package arpinum.ddd.event;
 
-import java.util.stream.Stream;
+
+import io.vavr.collection.Seq;
 
 public interface EventStore {
 
-    void save(Event<?>... event);
+    void save(Seq<Event<?>> events);
 
-    <T> Stream<Event<T>> allOf(Class<T> type);
+    <T> Cursor allOf(Class<T> type);
 
-    <T, E extends Event<T>> Stream<E> allOfWithType(Class<T> type, Class<E> eventType);
+    <T, E extends Event<T>> Cursor allOfWithType(Class<T> type, Class<E> eventType);
 
-    <T> Stream<Event<T>> allOf(Object id, Class<T> type);
+    <T> Cursor allOf(Object id, Class<T> type);
 
     <T> long count(Object id, Class<T> type);
 

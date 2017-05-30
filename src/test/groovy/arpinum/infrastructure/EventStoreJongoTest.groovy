@@ -1,6 +1,8 @@
 package arpinum.infrastructure
 
 import arpinum.ddd.event.Event
+import io.vavr.collection.List
+import io.vavr.collection.Stream
 import org.junit.Rule
 
 import arpinum.infrastructure.persistance.eventsourcing.EventStoreJongo
@@ -10,7 +12,6 @@ import spock.lang.Specification
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.stream.Collectors
 
 class EventStoreJongoTest extends Specification {
 
@@ -29,7 +30,7 @@ class EventStoreJongoTest extends Specification {
         def event = new FakeEvent(entity, "stuff")
 
         when:
-        store.save(event)
+        store.save(List.of(event))
 
         then:
         def record = jongo.collection("fake_eventstore").findOne()
@@ -50,7 +51,7 @@ class EventStoreJongoTest extends Specification {
                                                 , _class    : 'arpinum.infrastructure.EventStoreJongoTest$FakeEvent']
 
         when:
-        def events = store.allOf(FakeEntity.class).collect(Collectors.toList())
+        def events = store.allOf(FakeEntity.class).consume({s->s.toJavaList()})
 
         then:
         events != null
@@ -71,12 +72,11 @@ class EventStoreJongoTest extends Specification {
                                                 , _class    : 'arpinum.infrastructure.EventStoreJongoTest$FakeEvent']
 
         when:
-        def events = store.allOfWithType(FakeEntity, FakeEvent)
+        def events = store.allOfWithType(FakeEntity, FakeEvent).consume({s->s.toJavaList()})
 
         then:
         events != null
-        def eventualFirst = events.findFirst()
-        eventualFirst.isPresent()
+        events.size() == 1
     }
 
     def "mark as deleted"() {
@@ -105,7 +105,7 @@ class EventStoreJongoTest extends Specification {
                                                 , _class    : 'arpinum.infrastructure.EventStoreJongoTest$FakeEvent']
 
         when:
-        def events = store.allOf(FakeEntity.class).collect(Collectors.toList())
+        def events = store.allOf(FakeEntity.class).consume({s->s.toJavaList()})
 
         then:
         events != null
@@ -115,12 +115,12 @@ class EventStoreJongoTest extends Specification {
     def "loads ordered by timestamp"() {
         given:
         def first = new FakeEvent(new FakeEntity(id: "id"), "dataFirst")
-        store.save(first)
+        store.save(List.of(first))
         def second = new FakeEvent(new FakeEntity(id: "id"), "dataSecond")
-        store.save(second)
+        store.save(List.of(second))
 
         when:
-        def events = store.allOf("id", FakeEntity.class).collect(Collectors.toList())
+        def events = store.allOf("id", FakeEntity.class).consume({it.toJavaList()})
 
         then:
         events[0].someData == "dataFirst"
@@ -130,10 +130,10 @@ class EventStoreJongoTest extends Specification {
     def "deals with duration"() {
         given:
         def entity = new FakeEntity()
-        store.save(new FakeEventWithDuration(entity, Duration.of(30, ChronoUnit.DAYS)))
+        store.save(List.of(new FakeEventWithDuration(entity, Duration.of(30, ChronoUnit.DAYS))))
 
         when:
-        def result = store.allOf(entity.id, FakeEntity).collect(Collectors.toList())
+        def result = store.allOf(entity.id, FakeEntity).consume({it.toJavaList()})
 
         then:
         result.size() == 1

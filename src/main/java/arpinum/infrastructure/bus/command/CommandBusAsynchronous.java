@@ -56,9 +56,9 @@ public class CommandBusAsynchronous implements CommandBus {
             this.next = next;
         }
 
-        public <T> Tuple2<T, Seq<Event<?>>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
+        public <T> Tuple2<T, Seq<Event>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
             LOGGER.debug("Running middleware {}", current.getClass());
-            return (Tuple2<T, Seq<Event<?>>>) current.intercept(command, () -> next.apply(h, command));
+            return (Tuple2<T, Seq<Event>>) current.intercept(command, () -> next.apply(h, command));
         }
 
         private CommandMiddleware current;
@@ -71,7 +71,7 @@ public class CommandBusAsynchronous implements CommandBus {
         }
 
         @Override
-        public <T> Tuple2<T, Seq<Event<?>>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
+        public <T> Tuple2<T, Seq<Event>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
             LOGGER.debug("Applying handler {}", h.getClass());
             return h.execute(command);
         }
