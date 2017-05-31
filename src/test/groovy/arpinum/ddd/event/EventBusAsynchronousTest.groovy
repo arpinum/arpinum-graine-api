@@ -2,39 +2,40 @@ package arpinum.ddd.event
 
 import arpinum.ddd.BaseAggregate
 import arpinum.infrastructure.bus.event.EventBusAsynchronous
-import com.google.common.collect.Sets
+import com.google.common.util.concurrent.MoreExecutors
+import io.vavr.collection.List
 import spock.lang.Specification
 
 class EventBusAsynchronousTest extends Specification {
 
-    def "waits to propagage"() {
+    def executor = MoreExecutors.newDirectExecutorService()
+
+    def "invokes handler"() {
         given:
         def captor = new FakeEventCaptor()
-        EventBusAsynchronous bus = busAvec(captor)
+        def bus = new EventBusAsynchronous([] as Set, [captor] as Set, executor)
+        def event = new FakeEvent()
 
         when:
-        bus.publish(new FakeEvent())
+        bus.publish(List.of(event))
 
         then:
-        !captor.called
-        bus.events.get().size() == 1
+        captor.called
+        captor.event == event
+
     }
 
-    def "executes events after commands"() {
+    def "invokes middleware"() {
         given:
-        def captor = new FakeEventCaptor()
-        EventBusAsynchronous bus = busAvec(captor)
+        def middleware = new FakeBusMiddleware()
+        def bus = new EventBusAsynchronous([middleware] as Set, [new FakeEventCaptor()] as Set, executor)
+        def event = new FakeEvent()
 
         when:
-        bus.publish(new FakeEvent())
-        bus.afterExecution()
+        bus.publish(List.of(event))
 
         then:
-        bus.events.get().size() == 0
-    }
-
-    private busAvec(EventCaptor<? extends Event> captor) {
-        new EventBusAsynchronous(Sets.newHashSet(), Sets.newHashSet(captor))
+        middleware.event == event
     }
 
     static class FakeEvent extends Event<FakeAggregate> {
@@ -48,10 +49,23 @@ class EventBusAsynchronousTest extends Specification {
     static class FakeEventCaptor implements EventCaptor<FakeEvent> {
 
         boolean called
+        FakeEvent event
 
         @Override
-        void execute(FakeEvent evenement) {
+        void execute(FakeEvent event) {
+            this.event = event
             called = true
+        }
+    }
+
+    static class FakeBusMiddleware implements EventBusMiddleware {
+
+        Event<?> event
+
+        @Override
+        void intercept(Event<?> event, Runnable next) {
+            this.event = event
+            next.run()
         }
     }
 
