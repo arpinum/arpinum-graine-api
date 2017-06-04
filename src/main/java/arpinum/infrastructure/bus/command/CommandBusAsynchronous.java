@@ -23,7 +23,6 @@ public class CommandBusAsynchronous implements CommandBus {
     @Inject
     public CommandBusAsynchronous(Set<CommandMiddleware> middlewares, Set<CommandHandler> handlers, ExecutorService executor) {
         this.executor = executor;
-        this.handlers = List.ofAll(handlers);
         middlewareChain = List.ofAll(middlewares)
                 .append(new InvokeCommandHandlerMiddleware(handlers, executor))
                 .foldRight(new EmptyChain(), Chain::new);
@@ -35,7 +34,6 @@ public class CommandBusAsynchronous implements CommandBus {
                 .map(t -> t.apply((r, e) -> r));
     }
 
-    private final Seq<CommandHandler> handlers;
 
     private final Chain middlewareChain;
     protected final ExecutorService executor;
