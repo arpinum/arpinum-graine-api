@@ -53,23 +53,15 @@ class CommandBusAsynchronousTest extends Specification {
         response.get() == 'response'
     }
 
-    def "chain middlewares"() {
-        given:
-        def handler = new FakeCommandHandler()
-        def calls = []
-        def firstMiddleware = new FakeMiddleware(calls)
-        def secondMiddleware = new FakeMiddleware(calls)
-        def bus = new CommandBusAsynchronous([firstMiddleware, secondMiddleware] as Set, [handler] as Set, executor)
-        def command = new FakeMessage()
+    private class FakeCommandHandler implements CommandHandler<FakeMessage, String> {
 
-        when:
-        def response = bus.send(command)
+        def message
 
-        then:
-        firstMiddleware.called
-        secondMiddleware.called
-        calls == [firstMiddleware, secondMiddleware]
-        response.get() == 'response'
+        @Override
+        Tuple2<String, Seq<Event<?>>> execute(FakeMessage fakeMessage) {
+            message = fakeMessage
+            Tuple.of("response", List.empty())
+        }
     }
 
     private class FakeMessage implements Command<String> {
@@ -98,15 +90,23 @@ class CommandBusAsynchronousTest extends Specification {
         }
     }
 
-    private class FakeCommandHandler implements CommandHandler<FakeMessage, String> {
+    def "chain middlewares"() {
+        given:
+        def handler = new FakeCommandHandler()
+        def calls = []
+        def firstMiddleware = new FakeMiddleware(calls)
+        def secondMiddleware = new FakeMiddleware(calls)
+        def bus = new CommandBusAsynchronous([firstMiddleware, secondMiddleware] as Set, [handler] as Set, executor)
+        def command = new FakeMessage()
 
-        def message
+        when:
+        def response = bus.send(command)
 
-        @Override
-        Tuple2<String, Seq<Event<?>>> execute(FakeMessage fakeMessage) {
-            message = fakeMessage
-            Tuple.of("response", List.empty())
-        }
+        then:
+        firstMiddleware.called
+        secondMiddleware.called
+        calls == [firstMiddleware, secondMiddleware]
+        response.get() == 'response'
     }
 
 }

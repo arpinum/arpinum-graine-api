@@ -5,7 +5,6 @@ import arpinum.command.CommandBus;
 import arpinum.command.CommandHandler;
 import arpinum.command.CommandMiddleware;
 import arpinum.ddd.event.Event;
-import arpinum.infrastructure.bus.CaptorNotFound;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
@@ -25,23 +24,16 @@ public class CommandBusAsynchronous implements CommandBus {
     public CommandBusAsynchronous(Set<CommandMiddleware> middlewares, Set<CommandHandler> handlers, ExecutorService executor) {
         this.executor = executor;
         this.handlers = List.ofAll(handlers);
-        middlewareChain = List.ofAll(middlewares).foldRight(new HandlerInvokation(), Chain::new);
+        middlewareChain = List.ofAll(middlewares)
+                .append(new InvokeCommandHandlerMiddleware(handlers, executor))
+                .foldRight(new EmptyChain(), Chain::new);
     }
 
     @Override
     public <TReponse> Future<TReponse> send(Command<TReponse> message) {
-        return handlers.find(h -> h.commandType().equals(message.getClass()))
-                .map(h -> (CommandHandler<Command<TReponse>, TReponse>) h)
-                .map(h -> execute(h, message))
-                .getOrElse(() -> Future.failed(new CaptorNotFound(message.getClass())));
-    }
-
-    private <TReponse> Future<TReponse> execute(CommandHandler<Command<TReponse>, TReponse> handler, Command<TReponse> command) {
-        return middlewareChain
-                .apply(handler, command)
+        return middlewareChain.apply(message)
                 .map(t -> t.apply((r, e) -> r));
     }
-
 
     private final Seq<CommandHandler> handlers;
 
@@ -56,25 +48,24 @@ public class CommandBusAsynchronous implements CommandBus {
             this.next = next;
         }
 
-        public <T> Future<Tuple2<T, Seq<Event>>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
+        public <T> Future<Tuple2<T, Seq<Event>>> apply(Command<T> command) {
             LOGGER.debug("Running middleware {}", current.getClass());
 
-            return current.intercept(CommandBusAsynchronous.this, command, () -> next.apply(h, command));
+            return current.intercept(CommandBusAsynchronous.this, command, () -> next.apply(command));
         }
 
         private CommandMiddleware current;
         private Chain next;
     }
 
-    private class HandlerInvokation extends Chain {
-        public HandlerInvokation() {
+    private class EmptyChain extends Chain {
+        public EmptyChain() {
             super(null, null);
         }
 
         @Override
-        public <T> Future<Tuple2<T, Seq<Event>>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
-            LOGGER.debug("Applying handler {}", h.getClass());
-            return Future.ofCallable(CommandBusAsynchronous.this.executor, () -> h.execute(command));
+        public <T> Future<Tuple2<T, Seq<Event>>> apply(Command<T> command) {
+            throw new RuntimeException("Can't happen");
         }
     }
 }
