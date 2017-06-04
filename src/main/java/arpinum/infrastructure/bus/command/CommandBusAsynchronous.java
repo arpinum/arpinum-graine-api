@@ -37,43 +37,44 @@ public class CommandBusAsynchronous implements CommandBus {
     }
 
     private <TReponse> Future<TReponse> execute(CommandHandler<Command<TReponse>, TReponse> handler, Command<TReponse> command) {
-        return Future.of(executor, () -> middlewareChain
+        return middlewareChain
                 .apply(handler, command)
-                .apply((r, e) -> r));
+                .map(t -> t.apply((r, e) -> r));
     }
 
 
     private final Seq<CommandHandler> handlers;
 
     private final Chain middlewareChain;
-    private final ExecutorService executor;
+    protected final ExecutorService executor;
     private final static Logger LOGGER = LoggerFactory.getLogger(CommandBusAsynchronous.class);
 
-    private static class Chain {
+    private class Chain {
 
         Chain(CommandMiddleware current, Chain next) {
             this.current = current;
             this.next = next;
         }
 
-        public <T> Tuple2<T, Seq<Event>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
+        public <T> Future<Tuple2<T, Seq<Event>>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
             LOGGER.debug("Running middleware {}", current.getClass());
-            return (Tuple2<T, Seq<Event>>) current.intercept(command, () -> next.apply(h, command));
+
+            return current.intercept(CommandBusAsynchronous.this, command, () -> next.apply(h, command));
         }
 
         private CommandMiddleware current;
         private Chain next;
     }
 
-    private static class HandlerInvokation extends Chain {
+    private class HandlerInvokation extends Chain {
         public HandlerInvokation() {
             super(null, null);
         }
 
         @Override
-        public <T> Tuple2<T, Seq<Event>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
+        public <T> Future<Tuple2<T, Seq<Event>>> apply(CommandHandler<Command<T>, T> h, Command<T> command) {
             LOGGER.debug("Applying handler {}", h.getClass());
-            return h.execute(command);
+            return Future.ofCallable(CommandBusAsynchronous.this.executor, () -> h.execute(command));
         }
     }
 }

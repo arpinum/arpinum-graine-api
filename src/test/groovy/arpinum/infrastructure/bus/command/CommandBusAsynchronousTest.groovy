@@ -1,6 +1,7 @@
 package arpinum.infrastructure.bus.command
 
 import arpinum.command.Command
+import arpinum.command.CommandBus
 import arpinum.command.CommandHandler
 import arpinum.command.CommandMiddleware
 import arpinum.ddd.event.Event
@@ -9,6 +10,7 @@ import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.collection.List
 import io.vavr.collection.Seq
+import io.vavr.concurrent.Future
 import spock.lang.Specification
 
 import java.util.function.Supplier
@@ -89,7 +91,7 @@ class CommandBusAsynchronousTest extends Specification {
         }
 
         @Override
-        Tuple2<?, Seq<Event>> intercept(Command<?> message, Supplier<Tuple2<?, Seq<Event>>> next) {
+        <T> Future<Tuple2<T, Seq<Event>>> intercept(CommandBus bus, Command<T> message, Supplier<Future<Tuple2<T, Seq<Event>>>> next) {
             called = true
             calls << this
             next.get()

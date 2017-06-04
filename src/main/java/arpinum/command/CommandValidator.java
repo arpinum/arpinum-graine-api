@@ -4,6 +4,7 @@ package arpinum.command;
 import arpinum.ddd.event.Event;
 import io.vavr.Tuple2;
 import io.vavr.collection.Seq;
+import io.vavr.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -21,7 +22,7 @@ public class CommandValidator implements CommandMiddleware {
     }
 
     @Override
-    public Tuple2<?, Seq<Event>> intercept(Command<?> command, Supplier<Tuple2<?, Seq<Event>>> next) {
+    public <T> Future<Tuple2<T, Seq<Event>>> intercept(CommandBus bus, Command<T> command, Supplier<Future<Tuple2<T, Seq<Event>>>> next) {
         validate(command);
         return next.get();
     }
@@ -38,4 +39,5 @@ public class CommandValidator implements CommandMiddleware {
     }
 
     private final Validator validator;
+
 }
