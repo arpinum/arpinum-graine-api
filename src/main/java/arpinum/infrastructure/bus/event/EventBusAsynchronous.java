@@ -4,6 +4,8 @@ import arpinum.ddd.event.Event;
 import arpinum.ddd.event.EventBus;
 import arpinum.ddd.event.EventBusMiddleware;
 import arpinum.ddd.event.EventCaptor;
+import arpinum.infrastructure.bus.Computation;
+import arpinum.infrastructure.bus.Io;
 import arpinum.infrastructure.bus.command.CommandBusAsynchronous;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
@@ -21,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 public class EventBusAsynchronous implements EventBus {
 
     @Inject
-    public EventBusAsynchronous(Set<EventBusMiddleware> middlewares, Set<EventCaptor> captors, ExecutorService executorService) {
+    public EventBusAsynchronous(Set<EventBusMiddleware> middlewares, Set<EventCaptor> captors, @Io ExecutorService executorService) {
         this.executorService = executorService;
         this.captors = List.ofAll(captors);
         middlewareChain = List.ofAll(middlewares).foldRight(new CaptorInvokation(), Chain::new);

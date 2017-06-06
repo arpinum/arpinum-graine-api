@@ -2,6 +2,7 @@ package arpinum.infrastructure.bus.query;
 
 
 import arpinum.infrastructure.bus.CaptorNotFound;
+import arpinum.infrastructure.bus.Io;
 import arpinum.query.Query;
 import arpinum.query.QueryBus;
 import arpinum.query.QueryHandler;
@@ -18,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 public class QueryBusAsynchronous implements QueryBus {
 
     @Inject
-    public QueryBusAsynchronous(Set<QueryMiddleware> middlewares, Set<QueryHandler> handlers, ExecutorService executor) {
+    public QueryBusAsynchronous(Set<QueryMiddleware> middlewares, Set<QueryHandler> handlers, @Io ExecutorService executor) {
         this.executor = executor;
         this.handlers = List.ofAll(handlers);
         middlewareChain = List.ofAll(middlewares).foldRight(new HandlerInvokation(), Chain::new);

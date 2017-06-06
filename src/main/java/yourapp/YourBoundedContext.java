@@ -1,5 +1,6 @@
 package yourapp;
 
+import arpinum.configuration.JacksonConfiguration;
 import arpinum.infrastructure.bus.guice.ScanMagique;
 import com.google.inject.Injector;
 import yourapp.configuration.YourAppModule;
@@ -22,8 +23,10 @@ public class YourBoundedContext extends Application {
 
     @Override
     public Set<Object> getSingletons() {
-        return ScanMagique.searchForAnnotatedClass("yourapp.web", Path.class)
+        Set<Object> instances = ScanMagique.searchForAnnotatedClass("yourapp.web", Path.class)
                 .stream().map(injector::getInstance)
                 .collect(Collectors.toSet());
+        instances.add(new JacksonConfiguration());
+        return instances;
     }
 }

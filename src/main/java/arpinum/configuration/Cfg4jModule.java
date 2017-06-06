@@ -27,9 +27,7 @@ public class Cfg4jModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        /*bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool(new ThreadFactoryBuilder()
-                .setNameFormat("app-pool-%d").build()));*/
-        bind(ExecutorService.class).toInstance(MoreExecutors.newDirectExecutorService());
+
     }
 
     @Provides

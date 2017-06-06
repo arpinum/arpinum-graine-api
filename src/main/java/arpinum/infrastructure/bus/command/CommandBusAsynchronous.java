@@ -5,6 +5,7 @@ import arpinum.command.CommandBus;
 import arpinum.command.CommandHandler;
 import arpinum.command.CommandMiddleware;
 import arpinum.ddd.event.Event;
+import arpinum.infrastructure.bus.Computation;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
@@ -21,8 +22,7 @@ import java.util.concurrent.ExecutorService;
 public class CommandBusAsynchronous implements CommandBus {
 
     @Inject
-    public CommandBusAsynchronous(Set<CommandMiddleware> middlewares, Set<CommandHandler> handlers, ExecutorService executor) {
-        this.executor = executor;
+    public CommandBusAsynchronous(Set<CommandMiddleware> middlewares, Set<CommandHandler> handlers, @Computation ExecutorService executor) {
         middlewareChain = List.ofAll(middlewares)
                 .append(new InvokeCommandHandlerMiddleware(handlers, executor))
                 .foldRight(new EmptyChain(), Chain::new);
@@ -36,7 +36,6 @@ public class CommandBusAsynchronous implements CommandBus {
 
 
     private final Chain middlewareChain;
-    protected final ExecutorService executor;
     private final static Logger LOGGER = LoggerFactory.getLogger(CommandBusAsynchronous.class);
 
     private class Chain {

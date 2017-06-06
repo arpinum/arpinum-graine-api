@@ -3,6 +3,8 @@ package yourapp.web.wallet;
 import arpinum.command.CommandBus;
 import arpinum.query.QueryBus;
 import com.google.common.collect.ImmutableMap;
+import io.vavr.collection.HashMap;
+import io.vavr.collection.Map;
 import yourapp.command.CreateWalletCommand;
 import yourapp.query.wallet.FindAllWallets;
 
@@ -25,14 +27,15 @@ public class WalletsResource {
     public void get(@Suspended AsyncResponse response) {
         queryBus.send(new FindAllWallets())
                 .onFailure(response::resume)
-                .onSuccess(e -> response.resume(e.toJavaList()));
+                .onSuccess(e -> response.resume(e));
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public void create(@Suspended AsyncResponse response, CreateWalletCommand command) {
         bus.send(command)
-                .map(i -> ImmutableMap.of("id", i.toString()))
+                .map(i -> HashMap.of("id", i.toString()))
                 .onFailure(response::resume)
                 .onSuccess(response::resume);
     }
