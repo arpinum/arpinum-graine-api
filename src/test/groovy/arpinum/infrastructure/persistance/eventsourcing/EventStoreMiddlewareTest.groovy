@@ -1,6 +1,7 @@
 package arpinum.infrastructure.persistance.eventsourcing
 
 import arpinum.command.Command
+import arpinum.command.CommandBus
 import arpinum.ddd.event.Event
 import arpinum.ddd.event.EventStore
 import com.google.common.util.concurrent.MoreExecutors
@@ -13,7 +14,7 @@ class EventStoreMiddlewareTest extends Specification {
 
     def eventStore = Mock(EventStore)
 
-    def middleware = new EventStoreMiddleware(eventStore, MoreExecutors.directExecutor())
+    def middleware = new EventStoreMiddleware(eventStore, MoreExecutors.newDirectExecutorService())
 
     def "it calls next and saves results"() {
         given:
@@ -21,14 +22,15 @@ class EventStoreMiddlewareTest extends Specification {
         def event = new Event<String>() {
 
         }
-        def result = Tuple.of("hello", List.of(event))
-
+        def events = List.of(event)
+        def result = Tuple.of("hello", events)
+        def successful = Future.successful(MoreExecutors.newDirectExecutorService(), result)
         when:
-        def value = middleware.intercept(command, { Future.successful(result) })
+        def value = middleware.intercept(Mock(CommandBus), command, { successful })
 
         then:
-        1 * eventStore.save(List.of(event))
-        value == result
+        1 * eventStore.save(events)
+        value.get() == result
     }
 
 }

@@ -35,7 +35,7 @@ class CommandValidatorTest extends Specification {
         def next = Mock(Supplier)
 
         when:
-        validator.intercept(new FakeCommand(""), next)
+        validator.intercept(Mock(CommandBus), new FakeCommand(""), next)
 
         then:
         thrown(ValidationException)

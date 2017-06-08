@@ -1,10 +1,13 @@
 package arpinum.infrastructure.bus.event
 
 import arpinum.command.Command
+import arpinum.command.CommandBus
 import arpinum.ddd.event.Event
 import arpinum.ddd.event.EventBus
+import com.google.common.util.concurrent.MoreExecutors
 import io.vavr.Tuple
 import io.vavr.collection.List
+import io.vavr.concurrent.Future
 import spock.lang.Specification
 
 
@@ -20,13 +23,14 @@ class EventDispatcherMiddlewareTest extends Specification {
         def event = new Event<String>() {
 
         }
-        def result = Tuple.of("h", List.of(event))
+        def events = List.of(event)
+        def result = Future.successful(MoreExecutors.newDirectExecutorService(), Tuple.of("h", events))
 
         when:
-        def value = middleware.intercept(command, {result})
+        def value = middleware.intercept(Mock(CommandBus), command, {result})
 
         then:
-        1 * eventBus.publish(result._2)
+        1 * eventBus.publish(events)
         value == result
     }
 }
