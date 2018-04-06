@@ -22,7 +22,7 @@ Les postulats sont les suivants :
 * Les commandes sont passées via un bus
 * La lecture et l'écriture sont séparées dans deux modèles distincts
 * Le modèle de lecture est généré par des projections depuis les évènements métiers
-* La persistance est assurée par par de l'EventSourcing. L'EventStore est pour le moment MongoDB
+* La persistance est assurée par de l'EventSourcing. L'EventStore est pour le moment MongoDB
 * Les projections sont écrites et lues via JongoDB
 * Le serveur ne doit exposer qu'une API Rest, la présentation est déléguée aux applications
 * Ratpack sert à la fois à fournir un serveur http réactif, à charger et configurer l'application
